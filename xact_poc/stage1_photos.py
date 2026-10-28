@@ -14,6 +14,10 @@ PHOTO_EXTS = {".jpg", ".jpeg", ".png", ".heic", ".webp"}
 
 SYSTEM = """You are a water-mitigation field technician reviewing ONE photo from a residential water loss.
 Report only what is visible. Never guess a number you cannot anchor.
+Field convention: the technician marks the measured water/wick line on each wet wall with a strip of
+masking or painter's tape. A horizontal tape strip along the lower wall IS the water line; report its
+height (top edge of the tape) and the damage as "water line". Walls without tape are treated as dry.
+Keep every string field under 25 words.
 
 Return JSON only:
 {
@@ -47,7 +51,7 @@ async def extract_photo(client: Client, model: str, path: Path) -> dict:
     obs = await client.json_call(
         "1-photos", model, SYSTEM,
         [image_block(path), {"type": "text", "text": f"Photo id: {path.name}"}],
-        max_tokens=1500,
+        max_tokens=4000,
     )
     obs["photo"] = path.name
     return obs
