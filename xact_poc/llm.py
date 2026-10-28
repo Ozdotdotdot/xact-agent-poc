@@ -62,7 +62,10 @@ class Ledger:
     def summary(self) -> dict:
         out: dict[str, dict] = {}
         for c in self.calls:
-            s = out.setdefault(c["stage"], {"model": c["model"], "calls": 0, "in": 0, "out": 0, "usd": 0.0})
+            # Keyed by stage + model so a stage run with two models (or a retry on another) isn't mispriced.
+            key = c["stage"] if all(x["model"] == c["model"] for x in self.calls if x["stage"] == c["stage"]) \
+                else f"{c['stage']} ({c['model']})"
+            s = out.setdefault(key, {"model": c["model"], "calls": 0, "in": 0, "out": 0, "usd": 0.0})
             s["calls"] += 1
             s["in"] += c["in"]
             s["out"] += c["out"]
