@@ -14,7 +14,7 @@ from fastapi import FastAPI
 app = FastAPI(title="Mock Xact")
 DB: dict[str, dict] = {}
 FAULT_RATE = 0.15
-rng = random.Random(7)
+rng = random.Random()
 
 
 @app.post("/estimates")
@@ -50,7 +50,15 @@ def get_estimate(eid: str):
     return DB[eid]
 
 
-def serve(port: int = 8765) -> str:
+def serve(port: int = 0, fault_rate: float | None = None) -> str:
+    global FAULT_RATE
+    if fault_rate is not None:
+        FAULT_RATE = fault_rate
+    if not port:  # pick a free port so parallel runs don't share (and lose) one mock
+        import socket
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            port = sock.getsockname()[1]
     server = uvicorn.Server(uvicorn.Config(app, port=port, log_level="warning"))
     threading.Thread(target=server.run, daemon=True).start()
     base = f"http://127.0.0.1:{port}"

@@ -124,7 +124,7 @@ def build(facts: dict, surfaces: list[dict]) -> dict:
         walls = [s for s in surfs if s["surface"] == "wall" and s["water_line_in"] is not None]
         if walls:
             wl = max(s["water_line_in"] for s in walls)
-            wl_src = [f"{e['in']}in via {e['ref']}" for s in walls for e in s["water_line_estimates"]][:4]
+            wl_src = [f"{e['in']}in via {e['ref']}" for s in walls for e in s["water_line_estimates"]][:2]
             reported, depth_quote = tr.get("reported_water_depth_in"), tr.get("depth_quote")
             if reported is None and job_depth.get("value") is not None and norm(job_depth.get("room")) in ("unknown", room):
                 if abs(job_depth["value"] - wl) > 4:

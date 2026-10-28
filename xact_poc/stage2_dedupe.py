@@ -23,7 +23,8 @@ from .llm import Client
 
 ROOMS_SYSTEM = """You are sorting photos from one water-loss claim into rooms.
 
-You get the rooms named on the phone call, and for each photo: capture time, seconds since the previous
+You get the rooms named on the phone call WITH what the caller said about each (size, flooring, which
+walls got wet), and for each photo: capture time, seconds since the previous
 photo, the photo reviewer's room guess and evidence, a description, and water line heights seen.
 
 Evidence, strongest first:
@@ -31,9 +32,13 @@ Evidence, strongest first:
 2. Capture sequence: people photograph one room at a time. A gap of minutes usually means a new room;
    consecutive photos seconds apart are usually the same room.
 3. Water line height: water settles at one level per room, so similar heights suggest the same room.
+4. What the caller said: "only one wall got wet" means that room's photos show a single taped wall.
 The reviewer's room guess is the WEAKEST signal. It often calls an empty room "office" or "bedroom".
 Do not assign photos to a room just because the caller named it; a caller can name rooms that were
 never photographed.
+
+If two rooms look alike and nothing above tells them apart, still pick the likelier one, but give those
+photos confidence below 0.5 and say so in "why". A wrong confident label is worse than an honest unsure one.
 
 Return JSON only:
 {"assignments": [{"photo": "IMG_0001.jpg", "room": "<a known room, or 'unlisted: <name>'>",
@@ -98,7 +103,7 @@ def water_line(obs: list[dict]) -> tuple[float | None, list[dict]]:
     return (median(e["in"] for e in use) if use else None), use
 
 
-async def assign_rooms(client: Client, model: str, observations: list[dict], known_rooms: list[str],
+async def assign_rooms(client: Client, model: str, observations: list[dict], known_rooms: dict[str, dict],
                        times: dict[str, datetime]) -> dict[str, dict]:
     ordered = sorted(observations, key=lambda o: (times.get(o["photo"], datetime.max), o["photo"]))
     rows, prev = [], None
@@ -119,11 +124,17 @@ async def walls_for_room(client: Client, model: str, room: str, photos: list[str
     return await client.json_call("2b-walls", model, WALLS_SYSTEM.format(room=room), content, max_tokens=3000)
 
 
-async def run(client: Client, model: str, observations: list[dict], known_rooms: list[str],
-              photo_dir: Path) -> dict:
+async def run(client: Client, model: str, observations: list[dict], known_rooms: dict[str, dict],
+              photo_dir: Path, room_tags: dict[str, str] | None = None) -> dict:
+    """known_rooms: room name -> what the caller said about it (quotes, sizes, flooring).
+    room_tags: photo -> room recorded at capture time (guided capture). When present, 2a is skipped:
+    each room's photos go straight to that room's wall call."""
     obs_by_photo = {o["photo"]: o for o in observations if "error" not in o}
-    times = capture_times(photo_dir)
-    assign = await assign_rooms(client, model, list(obs_by_photo.values()), known_rooms, times)
+    if room_tags:
+        assign = {p: {"photo": p, "room": r, "confidence": 1.0, "why": "tagged at capture"}
+                  for p, r in room_tags.items() if p in obs_by_photo}
+    else:
+        assign = await assign_rooms(client, model, list(obs_by_photo.values()), known_rooms, capture_times(photo_dir))
 
     by_room: dict[str, list[str]] = {}
     for photo, a in assign.items():
@@ -137,6 +148,12 @@ async def run(client: Client, model: str, observations: list[dict], known_rooms:
     surfaces = []
     for room, photos in by_room.items():
         low_conf = [p for p in photos if assign[p].get("confidence", 1) < 0.6]
+        if len(low_conf) * 2 >= len(photos):
+            surfaces.append({"key": f"{room}/note/sorting", "room": room, "surface": "note",
+                             "locator": "room sorting", "materials": [], "damage": [], "water_line_in": None,
+                             "water_line_estimates": [], "photos": low_conf, "confidence": 0, "ambiguous": True,
+                             "conflicts": [f"Unsure these {len(low_conf)} photos are the {room}: "
+                                           f"{assign[low_conf[0]].get('why', '')}. A room tag at capture removes this."]})
         wm = wall_maps.get(room, {"walls": [], "unmatched": [], "not_this_room": []})
         n_walls = len(wm["walls"])
         for w in wm["walls"]:

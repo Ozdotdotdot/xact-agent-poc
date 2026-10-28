@@ -56,11 +56,11 @@ def write(r: dict, claim_dir: Path, path: Path):
                        ("Reported depth", "reported_water_depth_in"), ("Hours before mitigation", "hours_before_mitigation")):
         v = f.get(key) or {}
         fact_rows.append(f"<tr><td>{label}</td><td>{e(v.get('value', '-'))}</td><td class=src>{e(v.get('quote') or '')}</td></tr>")
-    for r in f.get("rooms", []):
-        dims = r.get("area_sqft") and f"{r['area_sqft']} SF" or (r.get("length_ft") and f"{r['length_ft']} x {r['width_ft']} ft") \
-            or (r.get("affected_wall_lengths_ft") and f"wet wall {r['affected_wall_lengths_ft']} ft") or "unknown"
-        fact_rows.append(f"<tr><td>Room: {e(r['room'])}</td><td>{e(dims)}, {e(r.get('flooring') or '?')}</td>"
-                         f"<td class=src>{e(r.get('dims_quote') or r.get('wall_lengths_quote') or '')}</td></tr>")
+    for rm in f.get("rooms", []):
+        dims = rm.get("area_sqft") and f"{rm['area_sqft']} SF" or (rm.get("length_ft") and f"{rm['length_ft']} x {rm['width_ft']} ft") \
+            or (rm.get("affected_wall_lengths_ft") and f"wet wall {rm['affected_wall_lengths_ft']} ft") or "unknown"
+        fact_rows.append(f"<tr><td>Room: {e(rm['room'])}</td><td>{e(dims)}, {e(rm.get('flooring') or '?')}</td>"
+                         f"<td class=src>{e(rm.get('dims_quote') or rm.get('wall_lengths_quote') or '')}</td></tr>")
     facts_html = "".join(fact_rows)
     rooms_html = "".join(
         f"<tr><td><b>{e(r)}</b></td><td class=n>{len(v['photos'])}</td><td class=n>{v['wet_walls']}</td>"
@@ -106,7 +106,7 @@ img{{height:56px;border-radius:4px;margin:2px}} img:hover{{height:200px}}
 <h1>Water loss estimate: {e(r['claim'])}</h1>
 <div class=sub>Transcript + {len(r['observations'])} photos → mock Xact. Pipeline cost ${pipeline_cost:.4f}.</div>
 <h2>Funnel</h2><div class=funnel>
-<div><b>{len(r['observations'])}</b>photos</div><div><b>{dd['raw_observations']}</b>damaged-surface observations</div>
+<div><b>{len(r['observations'])}</b>photos</div><div><b>{dd['raw_observations']}</b>surface observations</div>
 <div><b>{dd['unique_surfaces']}</b>unique surfaces after dedupe</div><div><b>{len(sc['line_items'])}</b>line items written</div>
 <div><b class=bad>{len(sc['review_queue'])}</b>flagged for a human</div>
 <div><b class={'ok' if wr['verified'] else 'bad'}>{'✓' if wr['verified'] else '✗'}</b>Xact read-back</div></div>

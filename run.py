@@ -17,6 +17,10 @@ async def main():
     ap.add_argument("--dedupe-model", default=SMART)
     ap.add_argument("--scope-model", default=SMART)
     ap.add_argument("--baseline", action="store_true", help=f"also run the naive {FRONTIER} baseline")
+    ap.add_argument("--xact-fault-rate", type=float, default=0.15,
+                    help="share of writes the mock Xact silently drops or corrupts")
+    ap.add_argument("--guided", action="store_true",
+                    help="simulate guided capture: photos arrive tagged with their room (from truth.json)")
     args = ap.parse_args()
 
     out = Path("out") / args.claim.name / args.transcript
@@ -26,8 +30,12 @@ async def main():
     ledger = Ledger()
     client = Client(ledger)
 
-    result = await run_claim(client, args.claim, transcript, models, xact_mock.serve(),
-                             out.parent / f"observations.{args.photo_model}.json", log=print)
+    guided = None
+    if args.guided:
+        truth = json.loads((args.claim / "truth.json").read_text())
+        guided = {r: t["photos"] for r, t in truth["rooms"].items()}
+    result = await run_claim(client, args.claim, transcript, models, xact_mock.serve(fault_rate=args.xact_fault_rate),
+                             out.parent / f"observations.{args.photo_model}.json", log=print, guided=guided)
 
     base_result = None
     if args.baseline:

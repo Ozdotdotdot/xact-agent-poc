@@ -1,0 +1,1463 @@
+{
+  "models": {
+    "photo": "claude-haiku-5-5",
+    "dedupe": "claude-sonnet-5-5",
+    "scope": "claude-sonnet-5-5"
+  },
+  "rows": [
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 9,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 5,
+      "line_items": 16,
+      "total": 2184.24,
+      "xact_verified": true,
+      "xact_repairs": 5,
+      "transcript": "01-prepared",
+      "run": 1,
+      "usd": 0.0739,
+      "assignments": {
+        "IMG_7689.jpg": "guest bedroom",
+        "IMG_7690.jpg": "guest bedroom",
+        "IMG_7691.jpg": "guest bedroom",
+        "IMG_7692.jpg": "guest bedroom",
+        "IMG_7693.jpg": "guest bedroom",
+        "IMG_7694.jpg": "guest bedroom",
+        "IMG_7695.jpg": "guest bedroom",
+        "IMG_7696.jpg": "guest bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "den",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (16.3ft walls).",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "guest bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (11.8ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "confirm water line height",
+          "why": "Caller said ~0.5in (\"Maybe half an inch across the floor?\"), photos show water lines of ~9in in the den, ~5.0in in the guest bedroom, ~16.75in in the living room. Wicking climbs above standing water; tech should confirm with a moisture meter.",
+          "sources": []
+        },
+        {
+          "room": "bedroom closet",
+          "needs": "moisture reading + photos",
+          "why": "Caller hasn't checked it: \"The bedroom has a closet. I haven't opened it yet, there's a bunch of stuff in there, so I don't know.\". Not billed until there's evidence.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.5,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 9,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 4,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 6,
+      "line_items": 16,
+      "total": 2682.51,
+      "xact_verified": true,
+      "xact_repairs": 5,
+      "transcript": "01-prepared",
+      "run": 2,
+      "usd": 0.0788,
+      "assignments": {
+        "IMG_7689.jpg": "guest bedroom",
+        "IMG_7690.jpg": "guest bedroom",
+        "IMG_7691.jpg": "guest bedroom",
+        "IMG_7692.jpg": "guest bedroom",
+        "IMG_7693.jpg": "guest bedroom",
+        "IMG_7694.jpg": "guest bedroom",
+        "IMG_7695.jpg": "guest bedroom",
+        "IMG_7696.jpg": "guest bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "3 of 4 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "measure affected wall lengths",
+          "why": "4 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (16.3ft walls).",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "guest bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "3 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (11.8ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "confirm water line height",
+          "why": "Caller said ~0.5in (\"Maybe half an inch across the floor?\"), photos show water lines of ~9in in the den, ~5.5in in the guest bedroom, ~16.75in in the living room. Wicking climbs above standing water; tech should confirm with a moisture meter.",
+          "sources": []
+        },
+        {
+          "room": "bedroom closet",
+          "needs": "moisture reading + photos",
+          "why": "Caller hasn't checked it: \"The bedroom has a closet. I haven't opened it yet, there's a bunch of stuff in there, so I don't know.\". Not billed until there's evidence.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 10,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 4,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 6,
+      "line_items": 16,
+      "total": 2532.43,
+      "xact_verified": true,
+      "xact_repairs": 2,
+      "transcript": "01-prepared",
+      "run": 3,
+      "usd": 0.0867,
+      "assignments": {
+        "IMG_7689.jpg": "guest bedroom",
+        "IMG_7690.jpg": "guest bedroom",
+        "IMG_7691.jpg": "guest bedroom",
+        "IMG_7692.jpg": "guest bedroom",
+        "IMG_7693.jpg": "guest bedroom",
+        "IMG_7694.jpg": "guest bedroom",
+        "IMG_7695.jpg": "guest bedroom",
+        "IMG_7696.jpg": "guest bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "4 of 4 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "measure affected wall lengths",
+          "why": "4 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (16.3ft walls).",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "guest bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (11.8ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "confirm water line height",
+          "why": "Caller said ~0.5in (\"Maybe half an inch across the floor?\"), photos show water lines of ~10in in the den, ~5.0in in the guest bedroom, ~16.75in in the living room. Wicking climbs above standing water; tech should confirm with a moisture meter.",
+          "sources": []
+        },
+        {
+          "room": "bedroom closet",
+          "needs": "moisture reading + photos",
+          "why": "Caller hasn't checked it: \"I haven't opened it yet, there's a bunch of stuff in there, so I don't know.\". Not billed until there's evidence.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 9,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 1,
+      "usd": 0.0747,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "bedroom",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wall belongs to this room",
+          "why": "Wall water lines disagree (6.0in, 9in, 10in). Water settles at one level per room, so 'wall with kitchen doorway and light switch (door at one end)' may be a different room.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "2 of 3 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "water category (1/2/3)",
+          "why": "Source not clear from call. Changes PPE and what is salvageable.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.5,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 8,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 2,
+      "usd": 0.092,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "bedroom",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "2 of 3 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "water category (1/2/3)",
+          "why": "Source not clear from call. Changes PPE and what is salvageable.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 8,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 3,
+      "usd": 0.082,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "bedroom",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "1 of 3 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7705.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "job",
+          "needs": "water category (1/2/3)",
+          "why": "Source not clear from call. Changes PPE and what is salvageable.",
+          "sources": []
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 10,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 3,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 2,
+      "missed": [],
+      "review_queue": 8,
+      "line_items": 6,
+      "total": 816.0,
+      "xact_verified": true,
+      "xact_repairs": 1,
+      "transcript": "03-overclaim",
+      "run": 1,
+      "usd": 0.0676,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "confirm water line height",
+          "why": "Caller said ~12in (\"In the bedroom it was over a foot. Easily.\"), photos show a ~5.0in water line. Wicking climbs above standing water; tech should confirm with a meter.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (12.0ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wall belongs to this room",
+          "why": "Wall water lines disagree (6.0in, 9in, 10in). Water settles at one level per room, so 'wall with kitchen doorway and light switch' may be a different room.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "home office",
+          "needs": "photos of this room",
+          "why": "Caller says it got wet but no photo shows it. Nothing is billed without evidence.",
+          "sources": []
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 10,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 4,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 2,
+      "missed": [],
+      "review_queue": 9,
+      "line_items": 6,
+      "total": 816.0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "03-overclaim",
+      "run": 2,
+      "usd": 0.0792,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "confirm water line height",
+          "why": "Caller said ~12in (\"In the bedroom it was over a foot. Easily.\"), photos show a ~5.0in water line. Wicking climbs above standing water; tech should confirm with a meter.",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (12.0ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wall belongs to this room",
+          "why": "Wall water lines disagree (6.25in, 7.0in, 9in, 10in). Water settles at one level per room, so 'side wall adjacent to the intercom wall, with tape and outlet' may be a different room.",
+          "sources": [
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "4 of 4 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "home office",
+          "needs": "photos of this room",
+          "why": "Caller says it got wet but no photo shows it. Nothing is billed without evidence.",
+          "sources": []
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      "photo_room_acc": 0.91,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 5.0,
+          "wl_error_in": 0.5,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 2,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 9,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls_true": 2,
+          "wet_walls": 4,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls_true": 1,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 2,
+      "missed": [],
+      "review_queue": 8,
+      "line_items": 6,
+      "total": 816.0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "03-overclaim",
+      "run": 3,
+      "usd": 0.0835,
+      "assignments": {
+        "IMG_7689.jpg": "bedroom",
+        "IMG_7690.jpg": "bedroom",
+        "IMG_7691.jpg": "bedroom",
+        "IMG_7692.jpg": "bedroom",
+        "IMG_7693.jpg": "bedroom",
+        "IMG_7694.jpg": "bedroom",
+        "IMG_7695.jpg": "bedroom",
+        "IMG_7696.jpg": "bedroom",
+        "IMG_7700.jpg": "den",
+        "IMG_7701.jpg": "den",
+        "IMG_7702.jpg": "den",
+        "IMG_7703.jpg": "den",
+        "IMG_7704.jpg": "den",
+        "IMG_7705.jpg": "den",
+        "IMG_7706.jpg": "den",
+        "IMG_7707.jpg": "den",
+        "IMG_7708.jpg": "den",
+        "IMG_7709.jpg": "den",
+        "IMG_7697.jpg": "living room",
+        "IMG_7698.jpg": "living room",
+        "IMG_7699.jpg": "living room",
+        "IMG_7710.jpg": "living room",
+        "IMG_7711.jpg": "living room"
+      },
+      "review_queue_items": [
+        {
+          "room": "bedroom",
+          "needs": "measure affected wall lengths",
+          "why": "2 wet wall(s) seen in photos but lengths unknown; drywall/baseboard quantities assume a square room (12.0ft walls).",
+          "sources": [
+            "IMG_7689.jpg",
+            "IMG_7690.jpg",
+            "IMG_7691.jpg",
+            "IMG_7692.jpg",
+            "IMG_7693.jpg",
+            "IMG_7694.jpg",
+            "IMG_7695.jpg",
+            "IMG_7696.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wall belongs to this room",
+          "why": "Wall water lines disagree (8in, 4.5in, 4.5in, 9in). Water settles at one level per room, so 'wall with the door to the couch room, plus adjoining right wall' may be a different room.",
+          "sources": [
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "confirm wet-wall count",
+          "why": "4 of 4 wall groupings are uncertain (similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "den",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7700.jpg",
+            "IMG_7701.jpg",
+            "IMG_7702.jpg",
+            "IMG_7703.jpg",
+            "IMG_7704.jpg",
+            "IMG_7705.jpg",
+            "IMG_7706.jpg",
+            "IMG_7707.jpg"
+          ]
+        },
+        {
+          "room": "home office",
+          "needs": "photos of this room",
+          "why": "Caller says it got wet but no photo shows it. Nothing is billed without evidence.",
+          "sources": []
+        },
+        {
+          "room": "living room",
+          "needs": "room dimensions or wall lengths",
+          "why": "Not stated on the call and not measurable from photos. Drywall, baseboard and antimicrobial for this room are held until measured.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        },
+        {
+          "room": "living room",
+          "needs": "room area (SF)",
+          "why": "Wet carpet must come out but room area is unknown.",
+          "sources": [
+            "IMG_7697.jpg",
+            "IMG_7698.jpg",
+            "IMG_7699.jpg",
+            "IMG_7710.jpg",
+            "IMG_7711.jpg"
+          ]
+        }
+      ]
+    }
+  ]
+}

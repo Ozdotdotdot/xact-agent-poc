@@ -79,6 +79,8 @@ async def main():
     ap.add_argument("--scope-model", default=SMART)
     ap.add_argument("--transcripts", nargs="*")
     ap.add_argument("--tag", default="latest", help="results/eval-<tag>.json")
+    ap.add_argument("--guided", action="store_true",
+                    help="simulate guided capture: photos arrive tagged with their room (from truth.json)")
     args = ap.parse_args()
 
     truth = json.loads((args.claim / "truth.json").read_text())
@@ -96,14 +98,17 @@ async def main():
             ledger = Ledger()
             client = Client(ledger)
             try:
-                result = await run_claim(client, args.claim, transcript, models, mock, obs_cache)
+                guided = {r: t["photos"] for r, t in truth["rooms"].items()} if args.guided else None
+                result = await run_claim(client, args.claim, transcript, models, mock, obs_cache, guided=guided)
             except Exception as e:  # a crashed run is a data point, not a reason to lose the others
                 print(f"{name} #{i + 1}: FAILED {e!r:.150}")
                 rows.append({"transcript": name, "run": i + 1, "failed": repr(e)[:300], "usd": round(ledger.total(), 4)})
                 continue
             finally:
                 await client.close()
-            s = score(result, truth, name) | {"transcript": name, "run": i + 1, "usd": round(ledger.total(), 4)}
+            s = score(result, truth, name) | {"transcript": name, "run": i + 1, "usd": round(ledger.total(), 4),
+                                              "assignments": {p: a["room"] for p, a in result["dedupe"].get("assignments", {}).items()},
+                                              "review_queue_items": result["scope"]["review_queue"]}
             rows.append(s)
             print(f"{name} #{i + 1}: photos->room {s['photo_room_acc']:.0%}, flags {s['flags_caught']}/{s['flags_expected']}, "
                   f"queue {s['review_queue']}, items {s['line_items']}, ${s['total']:,.0f}, cost ${s['usd']:.4f}")

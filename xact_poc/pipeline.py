@@ -6,19 +6,30 @@ from .llm import Client
 
 
 async def run_claim(client: Client, claim: Path, transcript: str, models: dict, mock_base: str,
-                    obs_cache: Path, log=lambda *_: None) -> dict:
+                    obs_cache: Path, log=lambda *_: None, guided: dict[str, list[str]] | None = None) -> dict:
+    """guided: room -> photo stems, as a guided capture app would record them. Rooms are matched to the
+    call's room names, since the app builds its room list from the call."""
     log(f"[0] transcript -> cited facts ({models['scope']})")
     facts = await stage3_scope.extract_facts(client, models["scope"], transcript)
-    rooms = [r["room"].lower() for r in facts.get("rooms", [])]
-    log(f"    rooms on the call: {rooms}")
+    rooms = {r["room"].lower(): {k: v for k, v in r.items() if k != "room" and v not in (None, [], "")}
+             for r in facts.get("rooms", [])}
+    log(f"    rooms on the call: {list(rooms)}")
 
     # Photo observations don't depend on the transcript, so they're cached per claim + model.
     log(f"[1] photos -> observations ({models['photo']})")
     obs = await stage1_photos.run(client, models["photo"], claim / "photos", obs_cache)
     log(f"    {len(obs)} photos, {sum(len(o.get('surfaces', [])) for o in obs)} surface observations")
 
+    tags = None
+    if guided:
+        tags = {}
+        for capture_room, stems in guided.items():
+            name = next((r for r in rooms if capture_room in r or r in capture_room), capture_room)
+            tags.update({f"{s}.jpg": name for s in stems})
+        log(f"    guided capture: photos arrive tagged with {sorted(set(tags.values()))}")
+
     log(f"[2] dedupe ({models['dedupe']})")
-    dd = await stage2_dedupe.run(client, models["dedupe"], obs, rooms, claim / "photos")
+    dd = await stage2_dedupe.run(client, models["dedupe"], obs, rooms, claim / "photos", room_tags=tags)
     log(f"    {dd['raw_observations']} surface observations -> {dd['unique_surfaces']} unique surfaces")
     for r, v in dd["rooms"].items():
         log(f"    {r}: {len(v['photos'])} photos, {v['wet_walls']} wet walls")

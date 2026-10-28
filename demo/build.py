@@ -16,11 +16,26 @@ VERSIONS = [  # (results file, label, what changed)
     ("eval-1-flat-haiku.json", "v1: one dedupe call, Haiku", "Cheap model matches text descriptions of walls across 23 photos"),
     ("eval-2-flat-sonnet.json", "v2: one dedupe call, Sonnet", "Same design, stronger model"),
     ("eval-3-hierarchical.json", "v3: hierarchical", "Photo->room from capture time + contents, then one vision call per room"),
+    ("eval-4-hierarchical-caller-context.json", "v4: + what the caller said", "Room sorter also sees the caller's description of each room"),
+    ("eval-5-guided-capture.json", "v5: guided capture (simulated)", "Photos arrive tagged with their room, so each room goes straight to its own call"),
 ]
+
+
+def photo_room(r: dict, truth: dict) -> float:
+    """From the raw room assignments when the run saved them; older runs only have the surface-based score."""
+    if not r.get("assignments"):
+        return r["photo_room_acc"]
+    true_room = {f"{p}.jpg": room for room, t in truth["rooms"].items() for p in t["photos"]}
+    def same(got, want):
+        got = got.lower()
+        return want in got or any(a.lower() in got for a in truth["rooms"][want].get("aka", []))
+    return sum(same(r["assignments"].get(p, ""), want) for p, want in true_room.items()) / len(true_room)
 
 
 def summarize(rows: list[dict], truth: dict) -> dict:
     ok = [r for r in rows if "failed" not in r]
+    for r in ok:
+        r["photo_room_acc"] = photo_room(r, truth)
     cut = [x["flood_cut_ok"] for r in ok for x in r["rooms"].values() if x["flood_cut_ok"] is not None]
     walls_exact = [x["wet_walls"] == truth["rooms"][room]["wet_walls"] for r in ok for room, x in r["rooms"].items()]
     return {
@@ -75,6 +90,8 @@ def main():
         ("Flood-cut height right", lambda s: f"{s['cut'][0]}/{s['cut'][1]}"),
         ("Wet-wall count exactly right", lambda s: f"{s['walls_exact'][0]}/{s['walls_exact'][1]}"),
         ("&nbsp;&nbsp;bedroom walls per run (true 2)", lambda s: ", ".join(map(str, s["walls"]["bedroom"]))),
+        ("&nbsp;&nbsp;den walls per run (true 2, L-shaped)", lambda s: ", ".join(map(str, s["walls"]["den"]))),
+        ("&nbsp;&nbsp;living room walls per run (true 1)", lambda s: ", ".join(map(str, s["walls"]["living room"]))),
         ("Expected review flags caught", lambda s: f"{s['flags'][0]}/{s['flags'][1]}"),
         ("Xact read-back verified", lambda s: f"{s['xact'][0]}/{s['xact'][1]} <span class=sub>({s['repairs']} silent failures repaired)</span>"),
         ("Cost per claim (median)", lambda s: f"${s['usd']:.3f}"),
@@ -87,7 +104,7 @@ def main():
         hero = "".join(f"<div class=stat><b>{v}</b><span>{l}</span></div>" for v, l in [
             ("0 / 12", "public water-damage photos with a measurable water line"),
             ("±0.5 in", "water line read off a tape measure in frame"),
-            (f"{final['photo_room']:.0%}", "photos sorted into the right room (v3, median of 9 runs)"),
+            (f"{final['cut'][0]}/{final['cut'][1]}", "flood-cut heights right with guided capture (9 runs × 3 rooms)"),
             (f"{final['repairs']}", "silent Xact write failures caught by read-back"),
             (f"${final['usd']:.2f}", "per claim, all model calls"),
         ])
@@ -192,19 +209,22 @@ Three different callers describe the same loss.</p>
 <div class=flow>
 <div class=box><b>0 · Call → facts</b>Sonnet, every fact quoted</div><div class=arrow>→</div>
 <div class=box><b>1 · Per photo</b>Haiku, 1 photo per call, ~1.2k tokens</div><div class=arrow>→</div>
-<div class=box><b>2a · Photo → room</b>capture time, contents, water level</div><div class=arrow>→</div>
+<div class=box><b>2a · Photo → room</b>skipped with guided capture; else capture time, contents, caller's description</div><div class=arrow>→</div>
 <div class=box><b>2b · Room → walls</b>1 vision call per room</div><div class=arrow>→</div>
 <div class="box code"><b>3 · Quantities</b>plain code, no model</div><div class=arrow>→</div>
 <div class="box code"><b>4 · Write + read back</b>diff and repair</div>
 </div>
-<pre>uv run run.py data/claim-001 --transcript 03-overclaim</pre>
+<pre>uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.3</pre>
 <p class=mut>Then open <code>out/claim-001/03-overclaim/report.html</code>: review queue, line items with source photos, Xact repair log, cost.</p>
 </section>
 
 <section>
 <div class=step>Step 5 · Measured, not demoed</div>
 <h2>Each version, 3 callers × 3 runs, scored against the truth</h2>
-<p class=mut>One good run proves nothing. The parts owned by code (review flags, Xact verification) were solid from v1. Grouping photos was the weak link.</p>
+<p class=mut>One good run proves nothing. The parts owned by code (review flags, Xact verification) were solid from v1.
+Grouping photos was the weak link. Splitting work per room (v3) fixed wall counting; telling look-alike rooms apart stayed hard until
+photos arrived tagged (v5). v5 simulates room tags only: the den, an L-shaped room, still over-counts walls, which a
+one-step-per-wall capture flow would fix.</p>
 {eval}
 <p class=mut>Humans get this wrong too: an hour after the shoot I mislabeled 3 of my own 23 photos. Capture timestamps and visible furniture corrected it.</p>
 </section>
