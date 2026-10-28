@@ -18,8 +18,10 @@ async def run_claim(client: Client, claim: Path, transcript: str, models: dict, 
     log(f"    {len(obs)} photos, {sum(len(o.get('surfaces', [])) for o in obs)} surface observations")
 
     log(f"[2] dedupe ({models['dedupe']})")
-    dd = await stage2_dedupe.run(client, models["dedupe"], obs, rooms)
-    log(f"    {dd['raw_observations']} damaged-surface observations -> {dd['unique_surfaces']} unique surfaces")
+    dd = await stage2_dedupe.run(client, models["dedupe"], obs, rooms, claim / "photos")
+    log(f"    {dd['raw_observations']} surface observations -> {dd['unique_surfaces']} unique surfaces")
+    for r, v in dd["rooms"].items():
+        log(f"    {r}: {len(v['photos'])} photos, {v['wet_walls']} wet walls")
 
     log("[3] scope: cited facts + surfaces -> line items (code, no model)")
     scope = {"facts": facts, **stage3_scope.build(facts, dd["surfaces"])}

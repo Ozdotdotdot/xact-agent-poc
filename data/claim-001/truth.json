@@ -2,55 +2,146 @@
   "_about": "Ground truth for the staged basement loss. Tape strips mark the water line; heights measured with a tape measure from the floor. Room areas from a professional flooring measure of the same basement.",
   "rooms": {
     "bedroom": {
-      "aka": ["B/BD1", "basement bedroom"],
-      "water_line_in": [5.5, 7.5],
+      "aka": [
+        "B/BD1",
+        "basement bedroom"
+      ],
+      "water_line_in": [
+        5.5,
+        7.5
+      ],
       "area_sqft": 139,
       "flooring": "carpet",
-      "photos": ["IMG_7689", "IMG_7690", "IMG_7691", "IMG_7692", "IMG_7693", "IMG_7694", "IMG_7695", "IMG_7696"]
+      "photos": [
+        "IMG_7689",
+        "IMG_7690",
+        "IMG_7691",
+        "IMG_7692",
+        "IMG_7693",
+        "IMG_7694",
+        "IMG_7695",
+        "IMG_7696"
+      ],
+      "wet_walls": 2
     },
     "den": {
-      "aka": ["B/LR"],
-      "water_line_in": [8, 10],
+      "aka": [
+        "B/LR"
+      ],
+      "water_line_in": [
+        8,
+        10
+      ],
       "area_sqft": 265,
       "shape": "L-shaped",
       "flooring": "carpet",
-      "photos": ["IMG_7700", "IMG_7701", "IMG_7702", "IMG_7703", "IMG_7704", "IMG_7705", "IMG_7706", "IMG_7707", "IMG_7708", "IMG_7709"]
+      "photos": [
+        "IMG_7700",
+        "IMG_7701",
+        "IMG_7702",
+        "IMG_7703",
+        "IMG_7704",
+        "IMG_7705",
+        "IMG_7706",
+        "IMG_7707",
+        "IMG_7708",
+        "IMG_7709"
+      ],
+      "wet_walls": 2
     },
     "living room": {
-      "water_line_in": [14.5, 16.5],
-      "affected_wall_lengths_in": [105],
+      "water_line_in": [
+        14.5,
+        16.5
+      ],
+      "affected_wall_lengths_in": [
+        105
+      ],
       "flooring": "carpet",
-      "photos": ["IMG_7697", "IMG_7698", "IMG_7699", "IMG_7710", "IMG_7711"]
+      "photos": [
+        "IMG_7697",
+        "IMG_7698",
+        "IMG_7699",
+        "IMG_7710",
+        "IMG_7711"
+      ],
+      "wet_walls": 1
     }
   },
-  "flood_cut_ft": {"bedroom": 2, "den": 2, "living room": 4},
+  "flood_cut_ft": {
+    "bedroom": 2,
+    "den": 2,
+    "living room": 4
+  },
   "transcripts": {
     "01-prepared": {
       "about": "Organized homeowner with numbers from a flooring quote. Understates the water depth.",
       "water_category": 1,
       "expected_flags": [
-        {"room": "bedroom", "needs": "photos", "match": "closet", "why": "closet mentioned, never photographed"},
-        {"room": "living room", "needs": "area", "match": "dimension|area", "why": "only one wall length given"},
-        {"room": "any", "needs": "water line conflict", "match": "water line", "why": "says 'half an inch', photos show 6-16in"}
+        {
+          "room": "bedroom",
+          "needs": "photos",
+          "match": "closet",
+          "why": "closet mentioned, never photographed"
+        },
+        {
+          "room": "living room",
+          "needs": "area",
+          "match": "dimension|area",
+          "why": "only one wall length given"
+        },
+        {
+          "room": "any",
+          "needs": "water line conflict",
+          "match": "water line",
+          "why": "says 'half an inch', photos show 6-16in"
+        }
       ]
     },
     "02-vague": {
       "about": "Flustered homeowner, no numbers, unsure of the source.",
       "water_category": null,
       "expected_flags": [
-        {"room": "job", "needs": "water category", "match": "category"},
-        {"room": "bedroom", "needs": "dimensions", "match": "dimension|area"},
-        {"room": "den", "needs": "dimensions", "match": "dimension|area"},
-        {"room": "living room", "needs": "dimensions", "match": "dimension|area"}
+        {
+          "room": "job",
+          "needs": "water category",
+          "match": "category"
+        },
+        {
+          "room": "bedroom",
+          "needs": "dimensions",
+          "match": "dimension|area"
+        },
+        {
+          "room": "den",
+          "needs": "dimensions",
+          "match": "dimension|area"
+        },
+        {
+          "room": "living room",
+          "needs": "dimensions",
+          "match": "dimension|area"
+        }
       ]
     },
     "03-overclaim": {
       "about": "Homeowner says water reached the home office (not photographed, actually dry) and exaggerates depth.",
       "water_category": 1,
       "expected_flags": [
-        {"room": "office", "needs": "photos", "match": "photo", "why": "claimed wet, no evidence"},
-        {"room": "any", "needs": "water line conflict", "match": "water line", "why": "says 'over a foot' in the bedroom, photos show ~6in"}
+        {
+          "room": "office",
+          "needs": "photos",
+          "match": "photo",
+          "why": "claimed wet, no evidence"
+        },
+        {
+          "room": "any",
+          "needs": "water line conflict",
+          "match": "water line",
+          "why": "says 'over a foot' in the bedroom, photos show ~6in"
+        }
       ]
     }
-  }
+  },
+  "_photo_labels_note": "Photographer's own later labeling swapped IMG_7693 (bedroom) and IMG_7703/7706 (den); corrected using capture timestamps and visible furniture."
 }

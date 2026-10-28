@@ -50,6 +50,7 @@ def score(result: dict, truth: dict, transcript: str) -> dict:
             "water_line_in": wl,
             "wl_error_in": None if wl is None else round(0 if lo <= wl <= hi else min(abs(wl - lo), abs(wl - hi)), 1),
             "flood_cut_ok": None if wl is None else flood_cut_ft(wl) == truth["flood_cut_ft"][r],
+            "wet_walls_true": t.get("wet_walls"),
             "wet_walls": sum(1 for s in surfaces if canon(s["room"], rooms) == r and s["surface"] == "wall"
                              and s["water_line_in"] is not None),
             "floor_sf": flr[0] if flr else None,
@@ -114,6 +115,7 @@ async def main():
         wl = [x["water_line_in"] for x in rs if x["water_line_in"] is not None]
         cut = [x["flood_cut_ok"] for x in rs if x["flood_cut_ok"] is not None]
         walls = [x["wet_walls"] for x in rs]
+        walls = f"{walls} (true {truth['rooms'][room].get('wet_walls')})"
         print(f"{room:<12} water line {truth['rooms'][room]['water_line_in']} -> est {sorted(wl)}; "
               f"flood cut right {sum(cut)}/{len(cut)}; wet walls per run {walls}")
     print(f"cost per run: median ${median(r['usd'] for r in rows):.4f}")

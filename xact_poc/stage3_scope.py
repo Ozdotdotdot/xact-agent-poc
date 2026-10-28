@@ -6,6 +6,7 @@ inputs are missing or contradictory is not guessed. It goes to the human review 
 """
 import json
 import math
+from statistics import median
 
 from .llm import Client
 
@@ -97,12 +98,22 @@ def build(facts: dict, surfaces: list[dict]) -> dict:
                  f"The photos may be of a different room.", photos)
 
         unsure = [s for s in surfs if s["ambiguous"] and s["surface"] == "wall"]
+        surfs_all, surfs = surfs, [s for s in surfs if s["surface"] != "note"]
+
+        # Water settles at one level per room. A wall far off the others was probably sorted into the wrong room.
+        levels = {s["locator"]: s["water_line_in"] for s in surfs if s["surface"] == "wall" and s["water_line_in"] is not None}
+        if len(levels) > 1 and max(levels.values()) - min(levels.values()) > 3:
+            odd = max(levels, key=lambda k: abs(levels[k] - median(levels.values())))
+            flag(room, "confirm wall belongs to this room",
+                 f"Wall water lines disagree ({', '.join(f'{v}in' for v in levels.values())}). Water settles at "
+                 f"one level per room, so '{odd}' may be a different room.",
+                 next(s["photos"] for s in surfs if s["locator"] == odd))
         if unsure:
             flag(room, "confirm wet-wall count",
                  f"{len(unsure)} of {sum(s['surface'] == 'wall' for s in surfs)} wall groupings are uncertain "
                  f"(similar-looking walls or close-ups without context). Wall count drives drywall quantity.",
                  sorted({p for s in unsure for p in s["photos"]}))
-        for s in surfs:
+        for s in surfs_all:
             for c in s["conflicts"]:
                 flag(room, f"resolve conflict on {s['key']}", c, s["photos"])
 
