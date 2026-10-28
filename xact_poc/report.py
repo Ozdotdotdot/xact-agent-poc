@@ -49,7 +49,23 @@ def write(r: dict, claim_dir: Path, path: Path):
         f"<tr><td>{e(s['key'])}</td><td class=n>{len(s['photos'])}</td>"
         f"<td class=n>{e(s['water_line_in'] if s['water_line_in'] is not None else '-')}</td>"
         f"<td>{''.join(f'<img src={th[p]} title={e(p)}>' for p in s['photos'] if p in th)}</td></tr>"
-        for s in dd["surfaces"])
+        for s in dd["surfaces"] if s["surface"] != "note")
+    f = sc["facts"]
+    fact_rows = []
+    for label, key in (("Cause", "cause"), ("Water category", "water_source_category"),
+                       ("Reported depth", "reported_water_depth_in"), ("Hours before mitigation", "hours_before_mitigation")):
+        v = f.get(key) or {}
+        fact_rows.append(f"<tr><td>{label}</td><td>{e(v.get('value', '-'))}</td><td class=src>{e(v.get('quote') or '')}</td></tr>")
+    for r in f.get("rooms", []):
+        dims = r.get("area_sqft") and f"{r['area_sqft']} SF" or (r.get("length_ft") and f"{r['length_ft']} x {r['width_ft']} ft") \
+            or (r.get("affected_wall_lengths_ft") and f"wet wall {r['affected_wall_lengths_ft']} ft") or "unknown"
+        fact_rows.append(f"<tr><td>Room: {e(r['room'])}</td><td>{e(dims)}, {e(r.get('flooring') or '?')}</td>"
+                         f"<td class=src>{e(r.get('dims_quote') or r.get('wall_lengths_quote') or '')}</td></tr>")
+    facts_html = "".join(fact_rows)
+    rooms_html = "".join(
+        f"<tr><td><b>{e(r)}</b></td><td class=n>{len(v['photos'])}</td><td class=n>{v['wet_walls']}</td>"
+        f"<td>{''.join(f'<img src={th[p]} title={e(p)}>' for p in v['photos'] if p in th)}</td></tr>"
+        for r, v in dd.get("rooms", {}).items())
     rounds = "".join(
         f"<tr><td>{x['round']}</td><td class=n>{x['written']}</td><td class=n>{x['verified']}</td>"
         f"<td>{e(x['corrupted_removed']) if x['corrupted_removed'] else '-'}</td><td class=n>{x['missing']}</td></tr>"
@@ -94,11 +110,13 @@ img{{height:56px;border-radius:4px;margin:2px}} img:hover{{height:200px}}
 <div><b>{dd['unique_surfaces']}</b>unique surfaces after dedupe</div><div><b>{len(sc['line_items'])}</b>line items written</div>
 <div><b class=bad>{len(sc['review_queue'])}</b>flagged for a human</div>
 <div><b class={'ok' if wr['verified'] else 'bad'}>{'✓' if wr['verified'] else '✗'}</b>Xact read-back</div></div>
+<h2>What the call said (every fact quoted)</h2><div class=wrap><table><tr><th>Fact</th><th>Value</th><th>Quote</th></tr>{facts_html}</table></div>
+<h2>Photos sorted into rooms</h2><div class=wrap><table><tr><th>Room</th><th class=n>Photos</th><th class=n>Wet walls</th><th>Photos</th></tr>{rooms_html}</table></div>
 <h2>Needs a human ({len(sc['review_queue'])})</h2><ul class=q>{queue or '<li>Nothing flagged.</li>'}</ul>
 <h2>Line items: ${sc['estimate_total']:,.2f}</h2><div class=wrap><table>
 <tr><th>Room</th><th>Code</th><th class=n>Qty</th><th class=n>Total</th><th>Basis and sources</th></tr>{items}</table></div>
 <p class=src>Codes are illustrative, modeled on Xactimate's WTR category. Not the real price list.</p>
-<h2>Dedupe: unique surfaces</h2><div class=wrap><table><tr><th>Surface</th><th class=n>Photos</th><th class=n>Water line (in)</th><th>Seen in</th></tr>{surfaces}</table></div>
+<h2>Unique surfaces (after dedupe)</h2><div class=wrap><table><tr><th>Surface</th><th class=n>Photos</th><th class=n>Water line (in)</th><th>Seen in</th></tr>{surfaces}</table></div>
 <h2>Write + read-back</h2><table><tr><th>Round</th><th class=n>Written</th><th class=n>Verified</th><th>Corrupted (removed)</th><th class=n>Missing</th></tr>{rounds}</table>
 {compare}
 <h2>Cost</h2><table><tr><th>Stage</th><th>Model</th><th class=n>Calls</th><th class=n>In</th><th class=n>Out</th><th class=n>USD</th></tr>{costs}</table>

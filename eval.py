@@ -78,6 +78,7 @@ async def main():
     ap.add_argument("--dedupe-model", default=SMART)
     ap.add_argument("--scope-model", default=SMART)
     ap.add_argument("--transcripts", nargs="*")
+    ap.add_argument("--tag", default="latest", help="results/eval-<tag>.json")
     args = ap.parse_args()
 
     truth = json.loads((args.claim / "truth.json").read_text())
@@ -94,17 +95,25 @@ async def main():
         for i in range(args.runs):
             ledger = Ledger()
             client = Client(ledger)
-            result = await run_claim(client, args.claim, transcript, models, mock, obs_cache)
-            await client.close()
+            try:
+                result = await run_claim(client, args.claim, transcript, models, mock, obs_cache)
+            except Exception as e:  # a crashed run is a data point, not a reason to lose the others
+                print(f"{name} #{i + 1}: FAILED {e!r:.150}")
+                rows.append({"transcript": name, "run": i + 1, "failed": repr(e)[:300], "usd": round(ledger.total(), 4)})
+                continue
+            finally:
+                await client.close()
             s = score(result, truth, name) | {"transcript": name, "run": i + 1, "usd": round(ledger.total(), 4)}
             rows.append(s)
             print(f"{name} #{i + 1}: photos->room {s['photo_room_acc']:.0%}, flags {s['flags_caught']}/{s['flags_expected']}, "
                   f"queue {s['review_queue']}, items {s['line_items']}, ${s['total']:,.0f}, cost ${s['usd']:.4f}")
 
-    tag = f"{args.dedupe_model}"
-    (out / f"eval.{tag}.json").write_text(json.dumps({"models": models, "rows": rows}, indent=2))
+    Path("results").mkdir(exist_ok=True)
+    Path(f"results/eval-{args.tag}.json").write_text(json.dumps({"models": models, "rows": rows}, indent=2))
 
-    print(f"\n=== {len(rows)} runs, dedupe={args.dedupe_model}")
+    failed = [r for r in rows if "failed" in r]
+    rows = [r for r in rows if "failed" not in r]
+    print(f"\n=== {len(rows)} runs ok, {len(failed)} failed, dedupe={args.dedupe_model}")
     print(f"photo->room accuracy: median {median(r['photo_room_acc'] for r in rows):.0%}, "
           f"range {min(r['photo_room_acc'] for r in rows):.0%}-{max(r['photo_room_acc'] for r in rows):.0%}")
     print(f"expected flags caught: {sum(r['flags_caught'] for r in rows)}/{sum(r['flags_expected'] for r in rows)}")

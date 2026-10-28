@@ -1,0 +1,376 @@
+{
+  "models": {
+    "photo": "claude-haiku-5-5",
+    "dedupe": "claude-sonnet-5-5",
+    "scope": "claude-sonnet-5-5"
+  },
+  "rows": [
+    {
+      "photo_room_acc": 1.0,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 4,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 6,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 9,
+      "line_items": 12,
+      "total": 2921.45,
+      "xact_verified": true,
+      "xact_repairs": 7,
+      "transcript": "01-prepared",
+      "run": 1,
+      "usd": 0.0832
+    },
+    {
+      "photo_room_acc": 0.87,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 8,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 3,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 9,
+      "line_items": 12,
+      "total": 2912.47,
+      "xact_verified": true,
+      "xact_repairs": 2,
+      "transcript": "01-prepared",
+      "run": 2,
+      "usd": 0.0888
+    },
+    {
+      "photo_room_acc": 0.87,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 5,
+          "floor_sf": 139,
+          "floor_sf_ok": true
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 3,
+          "floor_sf": 265,
+          "floor_sf_ok": true
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 3,
+      "flags_caught": 3,
+      "missed": [],
+      "review_queue": 9,
+      "line_items": 12,
+      "total": 2549.24,
+      "xact_verified": true,
+      "xact_repairs": 3,
+      "transcript": "01-prepared",
+      "run": 3,
+      "usd": 0.0848
+    },
+    {
+      "photo_room_acc": 0.87,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 8,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 6,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 10,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 1,
+      "usd": 0.1051
+    },
+    {
+      "photo_room_acc": 1.0,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 5,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 6,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 10,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 2,
+      "usd": 0.0842
+    },
+    {
+      "photo_room_acc": 1.0,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 7,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "den": {
+          "water_line_in": 10.0,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 6,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 2,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 4,
+      "flags_caught": 4,
+      "missed": [],
+      "review_queue": 10,
+      "line_items": 0,
+      "total": 0,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "02-vague",
+      "run": 3,
+      "usd": 0.0875
+    },
+    {
+      "photo_room_acc": 0.48,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 4,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 16.75,
+          "wl_error_in": 6.8,
+          "flood_cut_ok": false,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 13,
+          "wl_error_in": 1.5,
+          "flood_cut_ok": true,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 1,
+      "missed": [
+        {
+          "room": "any",
+          "needs": "water line conflict",
+          "match": "water line",
+          "why": "says 'over a foot' in the bedroom, photos show ~6in"
+        }
+      ],
+      "review_queue": 11,
+      "line_items": 6,
+      "total": 1118.4,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "03-overclaim",
+      "run": 1,
+      "usd": 0.0811
+    },
+    {
+      "photo_room_acc": 0.43,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 4,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 13,
+          "wl_error_in": 3,
+          "flood_cut_ok": false,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 2,
+      "missed": [],
+      "review_queue": 12,
+      "line_items": 6,
+      "total": 1118.4,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "03-overclaim",
+      "run": 2,
+      "usd": 0.0847
+    },
+    {
+      "photo_room_acc": 0.43,
+      "rooms": {
+        "bedroom": {
+          "water_line_in": 6,
+          "wl_error_in": 0,
+          "flood_cut_ok": true,
+          "wet_walls": 4,
+          "floor_sf": 144,
+          "floor_sf_ok": false
+        },
+        "den": {
+          "water_line_in": 13,
+          "wl_error_in": 3,
+          "flood_cut_ok": false,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        },
+        "living room": {
+          "water_line_in": 16.75,
+          "wl_error_in": 0.2,
+          "flood_cut_ok": true,
+          "wet_walls": 1,
+          "floor_sf": null,
+          "floor_sf_ok": null
+        }
+      },
+      "flags_expected": 2,
+      "flags_caught": 2,
+      "missed": [],
+      "review_queue": 13,
+      "line_items": 6,
+      "total": 1118.4,
+      "xact_verified": true,
+      "xact_repairs": 0,
+      "transcript": "03-overclaim",
+      "run": 3,
+      "usd": 0.1137
+    }
+  ]
+}

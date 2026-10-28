@@ -30,6 +30,8 @@ PRICES = {
     "deepseek-v4.1-flash-free": (0.0, 0.0),
 }
 
+THINKING_HEADROOM = 16000
+
 CHEAP = "claude-haiku-5-5"
 SMART = "claude-sonnet-5-5"
 FRONTIER = "claude-opus-5-5"
@@ -54,10 +56,9 @@ class Ledger:
     def add(self, stage: str, model: str, usage: dict):
         pin, pout = PRICES[model]
         tin, tout = usage.get("input_tokens", 0), usage.get("output_tokens", 0)
-        self.calls.append(
-            {"stage": stage, "model": model, "in": tin, "out": tout,
-             "usd": tin / 1e6 * pin + tout / 1e6 * pout}
-        )
+        # Prefer the cost Zen actually billed; fall back to list prices.
+        usd = usage.get("cost", tin / 1e6 * pin + tout / 1e6 * pout)
+        self.calls.append({"stage": stage, "model": model, "in": tin, "out": tout, "usd": usd})
 
     def summary(self) -> dict:
         out: dict[str, dict] = {}
@@ -121,7 +122,10 @@ class Client:
     async def _send(self, model: str, system: str, messages: list, max_tokens: int):
         """Returns (status, text, usage); hides the Anthropic vs OpenAI wire formats."""
         if model.startswith("claude"):
-            body = {"model": model, "max_tokens": max_tokens, "system": system, "messages": messages}
+            # Newer Claude models think before answering and thinking counts against max_tokens.
+            # Without headroom, hard calls spend the whole budget thinking and return no answer.
+            body = {"model": model, "max_tokens": max_tokens + THINKING_HEADROOM, "system": system,
+                    "messages": messages}
             r = await self.http.post(ANTHROPIC_URL, json=body)
             if r.status_code != 200:
                 return r, None, None
