@@ -17,26 +17,32 @@ xdg-open demo/deck.html        # F = fullscreen, arrow keys / space to move
 
 Two windows: the **deck** (fullscreen) and a **terminal** in the repo with the font size turned up.
 
+The warm-up caches photo descriptions, so the live run takes ~20s. To show step 2 running live instead, `rm out/claim-001/observations.*.json` first (~70s, ~10¢; talk over the wait).
+
 ## The story in one breath
 
-Public photos don't carry the measurements an estimate needs, so I staged a loss where I know the answers. I stress-tested it with three callers and iterated five versions. Better models helped, but the step that kept failing was knowing which room a photo is from, and that's a capture problem. So the fix is to own the capture.
+You asked what breaks first; I said missing information, then built it to check. Public photos don't carry the measurements, so I staged a loss where I know the answers. Models look, code does the math. Better models got room sorting to 91%; the only thing that got it to 100% wasn't a model change: the photos arrived tagged. So the fix is to own the capture.
+
+Say the thesis once at the start, prove it once on the chart, land it once at the close. Don't explain guided capture before the pipeline slide.
 
 ## Slide by slide
 
 | # | Slide | Say |
 |---|---|---|
-| 1 | What breaks first? | "In my Loom I said missing information breaks first. I built it to find out." |
+| 1 | What breaks first? | "You asked what breaks first when an agent turns a call and 40 photos into an Xact estimate. In my Loom I said missing information. I built it to check, and I was right. The fix isn't a smarter model, it's owning the capture." |
 | 2 | 0/12 public photos | "I started with 12 public water-damage photos. Not one had a water line the model could measure, and it said so instead of making up a number. The information just isn't in the photos." |
 | 3 | Staged water loss | "So I staged my own. Bedroom, den, living room, tape at three heights I measured, 23 photos with duplicates and different angles. Now I know the right answer for every room." |
-| 4 | Three callers | "Then three calls about the same basement: one prepared, one vague, one exaggerating. Each should trigger specific flags, and the guided runs caught every one." |
-| 5 | Pipeline | Walk the boxes left to right: "Read the call and pull out every fact with a quote. Describe each photo with a cheap model, one photo per call. Sort photos into rooms. Count the wet walls in each room by looking at that room's photos together. Then code, not a model, computes the estimate, writes it to Xact and reads it back to catch silent failures." |
-| 6 | Live run | Switch to the terminal and paste the one-line command from the slide. The steps are numbered 1–6, matching the pipeline slide. Point at: step 3 *skipped* (photos came tagged); step 4 wall counts; step 5 the **line items** (only rooms with measurements get billed: the overclaimer gave only the bedroom size, so den and living room are *held* and show up as `?` lines instead), the `?` lines (no photos of the office, "over a foot" vs ~5 in); step 6 the rounds catching dropped or corrupted writes until it verifies. About 8–9¢. |
-| 7 | Bar chart | "I iterated five times, nine runs each, scored against the truth. v1 and v2 hand every photo description to one model to group, and the stronger model does much better. v3 split it per room, which fixed wall counting but made room sorting worse. v4 gave the sorter what the caller said about each room. That helps when the caller is honest and hurts when they're not. v5 is the only change that isn't a model change: the photos arrive tagged with their room. 100%, even with the lying caller." |
+| 4 | Three callers | "Then three calls about the same basement: one prepared, one vague, one exaggerating. Each should trigger specific flags." |
+| 5 | Pipeline | "Models look, code does the math. A model reads the call and pulls out every fact with a quote. A cheap model describes each photo: walls, damage, where the water line is. Steps 3 and 4 are where it struggles: which room a photo is from, and how many walls got wet. Those aren't really vision problems; the person taking the photos already knows the answers, so a guided capture app should record them. In this run room tags come from capture, so step 3 is skipped. Wall counting is still on the model, and you'll see it miss. Then code computes the estimate, writes it to Xact, and reads it back to make sure every line actually landed. Anything missing or contradictory goes to a human instead of being guessed." |
+| 6 | Live run | Paste the command from the slide. Point at three things, nothing else: **step 4**: "Den says 3, truth is 2. That's the miss I mentioned, and it's flagged for a human." **The `?` lines**: "The caller said over a foot, the photos show six inches, so a human confirms. They claimed a home office with no photos of it, so nothing is billed there." **Step 6**: if a write failed, "Xact silently dropped a write; the read-back caught it and fixed it." If none failed, "no failures this run; across 45 eval runs it caught and repaired 60." |
+| 7 | Bar chart | "I ran five versions, nine runs each, scored against the truth. Better models and better prompts got room sorting from 39% to 91%. The only thing that got it to 100% wasn't a model change: the photos arrived tagged." |
 | 8 | 27/27 · 27/27 · 9/9 · $0.08 | "With that one change, every flood cut and every flag was right in every run, for 8 cents a claim." |
-| 9 | Wall counts | "What's still open: the L-shaped den gets over-counted. It does get flagged for a human, and the capture flow fixes it with one step per wall." |
-| 10 | Own the capture | Left to right: "room tag, one step per wall, tape at the line, a LiDAR scan for lengths, and whatever's left becomes the tech's checklist." |
-| 11 | What closes each gap | "Capture closes most of it. A tech with a meter closes the rest." |
-| 12 | Close | "It's right wherever it has evidence and explicit about the rest. The code and every run are public. I'd love to talk." |
+| 9 | Own the capture | "So that's the fix: own the capture. Room tag, one step per wall, a tape at the line, LiDAR for lengths, and whatever's left becomes the tech's checklist." |
+| 10 | Close | Read the two lines on screen: "Right wherever there's evidence. Explicit about the rest." Then: "The code's on GitHub. I'd love to talk." Don't skip it. |
+
+## Say it plainly
+
+You measured all of this, so drop the hedges: not "I was kind of right" / "I guess" / "I believe" / "I can imagine it messes up." Xact has no public write API, and a 200 OK doesn't prove a write landed; that's why it reads back. Skip asides about what's off screen or "fake numbers" (the line-item prices are illustrative; only say so if asked).
 
 ## Keep straight
 
@@ -48,4 +54,5 @@ Public photos don't carry the measurements an estimate needs, so I staged a loss
 
 - A model call fails: the client retries. If the run dies, open the warm-up run's report.
 - No write failures this run (they're random): "no faults this time; the eval repaired 60 across 45 runs."
-- A room shows an extra wall (den or bedroom): expected run to run, and it's flagged with `? <room>: confirm wet-wall count`.
+- The den shows an extra wall: expected, and it's flagged with `? den: confirm wet-wall count`.
+- The **bedroom** shows 3 walls (about 1 run in 5): it is *not* flagged and bills $967 instead of $816. Re-run before recording; check step 4 first.

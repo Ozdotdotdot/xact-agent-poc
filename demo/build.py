@@ -112,41 +112,21 @@ def slide_chart(versions: list) -> str:
     return groups
 
 
-def slide_walls(final: dict, truth: dict) -> str:
-    rows, scale = "", 5
-    for room, t in truth["rooms"].items():
-        counts, true = final["walls"][room], t["wet_walls"]
-        seen: dict[int, int] = {}
-        dots = ""
-        for c in counts:
-            k = seen[c] = seen.get(c, -1) + 1
-            dx, dy = (k % 3 - 1) * 32, (k // 3 - 1) * 32
-            dots += (f'<i class="{"ok" if c == true else "off"}" '
-                     f'style="left:calc({c / scale * 100:.2f}% + {dx}px);top:{65 + dy}px"></i>')
-        name = room.title() + (" · L-shaped" if room == "den" else "")
-        exact = sum(c == true for c in counts)
-        rows += (f'<div class="wrow reveal"><div class=wname><b>{e(name)}</b><span>true: {true}</span></div>'
-                 f'<div class=track><div class=truth style="left:{true / scale * 100:.2f}%"></div>{dots}</div>'
-                 f'<div class=wscore>{exact}/{len(counts)}</div></div>')
-    ticks = "".join(f'<span style="left:{n / scale * 100}%">{n}</span>' for n in range(scale + 1))
-    return rows + f'<div class=wrow><div></div><div class=ticks>{ticks}</div><div></div></div>'
-
-
 def main():
     truth = json.loads((CLAIM / "truth.json").read_text())
     versions = [(label, what, summarize(json.loads((ROOT / "results" / f).read_text())["rows"], truth))
                 for f, label, what in VERSIONS if (ROOT / "results" / f).exists()]
-    final, best_unguided = versions[-1][2], versions[-2][2]
+    final = versions[-1][2]
     n_photos = sum(len(t["photos"]) for t in truth["rooms"].values())
 
     public_cells, public_measured = slide_public()
     page = PAGE
     for k, v in {
         "ROOMS": slide_rooms(truth), "CALLERS": slide_callers(truth, final), "PUBLIC": public_cells, "PUBLIC_MEASURED": public_measured, "CHART": slide_chart(versions),
-        "WALLS": slide_walls(final, truth), "N_PHOTOS": str(n_photos), "RUNS": str(final["runs"]),
+        "N_PHOTOS": str(n_photos), "RUNS": str(final["runs"]),
         "CUT": "{}/{}".format(*final["cut"]), "FLAGS": "{}/{}".format(*final["flags"]),
         "XACT": "{}/{}".format(*final["xact"]), "REPAIRS": str(final["repairs"]), "USD": f"${final['usd']:.2f}",
-        "UNGUIDED_ROOM": f"{best_unguided['photo_room']:.0%}", "PHOTOS": PHOTOS,
+        "PHOTOS": PHOTOS,
     }.items():
         page = page.replace(f"%%{k}%%", v)
     out = ROOT / "demo/deck.html"
@@ -286,21 +266,7 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
 .tile b{display:block;font-size:150px;line-height:.95;font-weight:800;letter-spacing:-.04em}
 .tile span{display:block;margin-top:22px;font-size:34px;line-height:1.25;color:var(--dim)}
 
-/* 9 wall dots */
-.walls{margin-top:60px;display:flex;flex-direction:column;gap:24px}
-.wrow{display:grid;grid-template-columns:420px 1fr 160px;align-items:center;gap:40px}
-.wname b{display:block;font-size:44px;letter-spacing:-.02em}.wname span{font-family:var(--mono);font-size:22px;color:var(--dim)}
-.track{position:relative;height:150px;border-bottom:1px solid var(--line)}
-.track i{position:absolute;width:26px;height:26px;border-radius:50%;transform:translate(-50%,-50%)}
-.track i.ok{background:var(--ok)}.track i.off{background:transparent;border:4px solid var(--off)}
-.truth{position:absolute;top:-6px;bottom:-6px;width:6px;margin-left:-3px;background:var(--accent);border-radius:3px;opacity:.9}
-.wscore{font-family:var(--mono);font-size:44px;font-weight:600;text-align:right}
-.ticks{position:relative;height:30px}
-.ticks span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:22px;color:var(--dim)}
-.wkey{display:flex;gap:40px;margin-top:40px;font-family:var(--mono);font-size:24px;color:var(--dim)}
-.wkey i{display:inline-block;width:22px;height:22px;border-radius:50%;margin-right:12px;vertical-align:-4px}
-
-/* 10 capture mockup */
+/* 9 capture mockup */
 .phones{flex:1;display:flex;justify-content:space-between;align-items:center;margin-top:30px}
 .phone{width:310px;height:660px;border-radius:46px;border:12px solid #050505;background:#fff;color:#111;display:flex;flex-direction:column;
   overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45);font-family:var(--display);font-size:20px}
@@ -319,17 +285,7 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
 .cap{display:flex;justify-content:space-between;margin-top:26px}
 .cap div{width:310px;text-align:center;font-family:var(--mono);font-size:22px;color:var(--accent)}
 
-/* 11 what closes each gap */
-table{width:100%;border-collapse:collapse;margin-top:60px;font-size:32px}
-th{text-align:left;font-family:var(--mono);font-size:22px;font-weight:400;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;padding:0 24px 22px}
-td{padding:26px 24px;border-top:1px solid var(--line)}
-td:first-child{font-weight:600}
-td .x{color:var(--dim)}td .x::before{content:"✗ ";color:#e66767}
-td .w::before{content:"~ ";color:var(--accent)}
-td .v::before{content:"✓ ";color:#4ade80}
-td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
-
-/* 12 close */
+/* 10 close */
 .close h1{margin-top:auto;font-size:116px;max-width:1500px}
 .close h1 + h1{margin-top:16px;margin-bottom:200px;color:var(--accent)}
 .close .tape{bottom:300px;transform:rotate(1deg)}
@@ -418,14 +374,7 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 </section>
 
 <section class=slide>
-<div class="mono reveal">08 · v5 guided capture · still open</div>
-<h2 class=reveal>Counting walls: the L-shaped den is still open.</h2>
-<div class=walls>%%WALLS%%</div>
-<div class="wkey reveal"><span><i style="background:var(--ok)"></i>correct</span><span><i style="border:4px solid var(--off)"></i>wrong</span><span><i style="background:var(--accent);border-radius:3px;width:8px"></i>true count</span></div>
-</section>
-
-<section class=slide>
-<div class="mono reveal">09 · Concept · guided capture app</div>
+<div class="mono reveal">08 · Concept · guided capture app</div>
 <h2 class=reveal>Own the capture.</h2>
 <div class="phones reveal">
 <div class=phone><div class=top>Which room?<small>Room 2 of 3 · from the call</small></div>
@@ -443,19 +392,6 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <div class=btn>Start visit</div></div>
 </div>
 <div class="cap reveal"><div>room tag</div><div>one step per wall</div><div>±0.5 in</div><div>lengths, area</div><div>what's left</div></div>
-</section>
-
-<section class=slide>
-<div class="mono reveal">10 · What closes each gap</div>
-<h2 class=reveal>Capture fixes most of it. A tech closes the rest.</h2>
-<table class=reveal>
-<tr><th>The estimate needs</th><th>Call + photos</th><th>Guided capture</th><th>Then</th></tr>
-<tr><td>Room for each photo</td><td><span class=w>inferred · %%UNGUIDED_ROOM%%</span></td><td><span class=v>tagged</span></td><td></td></tr>
-<tr><td>Number of wet walls</td><td><span class=x>over-counted</span></td><td><span class=v>one step per wall</span></td><td></td></tr>
-<tr><td>Flood-cut height</td><td><span class=w>±2–4 in from outlets</span></td><td><span class=v>±0.5 in, tape</span></td><td></td></tr>
-<tr><td>Wall lengths, room area</td><td><span class=x>missing</span></td><td><span class=x>missing</span></td><td class=closer>LiDAR scan</td></tr>
-<tr><td>Moisture behind walls</td><td><span class=x>unknown</span></td><td><span class=x>unknown</span></td><td class=closer>tech + meter</td></tr>
-</table>
 </section>
 
 <section class="slide close">
