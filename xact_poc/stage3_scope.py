@@ -13,6 +13,7 @@ from .llm import Client
 SYSTEM = """You extract facts from a phone call between a water-mitigation company and a homeowner.
 Only report what is said. Every fact needs a verbatim quote from the transcript; if a fact is not
 stated, use null. Do not convert vague statements into precise numbers ("pretty big room" -> null).
+A stated bound is a number: "over a foot" -> 12, "at least six inches" -> 6.
 Convert stated units: "a hundred and five inches" -> 8.75 ft. "twelve by twelve" -> length 12, width 12.
 List every room the caller says got wet, even ones with no details.
 

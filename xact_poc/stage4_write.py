@@ -11,7 +11,7 @@ def sig(line: dict) -> tuple:
     return tuple(line[f] for f in FIELDS)
 
 
-def run(base: str, claim_id: str, line_items: list[dict], max_rounds: int = 4) -> dict:
+def run(base: str, claim_id: str, line_items: list[dict], max_rounds: int = 6) -> dict:
     http = httpx.Client(base_url=base)
     eid = http.post("/estimates", json={"claim": claim_id}).json()["id"]
     log = []

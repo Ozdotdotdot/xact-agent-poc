@@ -9,7 +9,7 @@ uv sync
 echo "ZEN_API_KEY=<your OpenCode Zen key>" > .env
 
 # warm-up run: caches the per-photo results so the live run is fast and you've seen it work once
-uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.5
+uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.3
 
 uv run demo/build.py
 xdg-open demo/deck.html        # F = fullscreen, arrow keys / space to move
