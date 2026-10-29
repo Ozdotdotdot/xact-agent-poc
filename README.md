@@ -4,7 +4,7 @@
 
 **Answer:** missing information breaks first. I built the agent, staged a water loss in my basement with measured ground truth, and scored five versions over 45 runs. The fix that mattered most wasn't a smarter model. It was **controlling how the photos are captured**.
 
-→ **Walkthrough:** `uv run demo/build.py && xdg-open demo/walkthrough.html` (or `open` on macOS)
+→ **Deck:** `uv run demo/build.py && xdg-open demo/deck.html` (or `open` on macOS; arrow keys to move, F for fullscreen)
 
 ## Results
 
@@ -52,7 +52,7 @@ Physical cross-checks run in code: water settles at one level per room, so a wal
 
 ## The real fix: own the capture
 
-Every hard problem above traces back to information the photos never carried. A guided capture flow puts it there: photos tagged by room, one step per wet wall, a tape measure at the line, a LiDAR scan for lengths. Whatever is still unknown (moisture behind walls, unchecked closets) becomes the tech's on-site checklist. The walkthrough has a concept mockup.
+Every hard problem above traces back to information the photos never carried. A guided capture flow puts it there: photos tagged by room, one step per wet wall, a tape measure at the line, a LiDAR scan for lengths. Whatever is still unknown (moisture behind walls, unchecked closets) becomes the tech's on-site checklist. The deck has a concept mockup.
 
 ## Run it
 

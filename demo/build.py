@@ -1,7 +1,7 @@
-"""Builds demo/walkthrough.html from results/*.json, truth.json and the transcripts.
+"""Builds demo/deck.html, a 16:9 slide deck, from results/*.json, truth.json and the transcripts.
 
-uv run demo/build.py   ->   open demo/walkthrough.html
-Every number on the page comes from a recorded eval run; nothing is typed in by hand.
+uv run demo/build.py   ->   xdg-open demo/deck.html   (arrow keys / space to move, F for fullscreen)
+Every number on a slide comes from a recorded eval run; nothing is typed in by hand.
 """
 import html
 import json
@@ -10,14 +10,21 @@ from statistics import median
 
 ROOT = Path(__file__).parent.parent
 CLAIM = ROOT / "data/claim-001"
+PHOTOS = "../data/claim-001/photos"
 e = lambda s: html.escape(str(s))
 
-VERSIONS = [  # (results file, label, what changed)
-    ("eval-1-flat-haiku.json", "v1: one dedupe call, Haiku", "Cheap model matches text descriptions of walls across 23 photos"),
-    ("eval-2-flat-sonnet.json", "v2: one dedupe call, Sonnet", "Same design, stronger model"),
-    ("eval-3-hierarchical.json", "v3: hierarchical", "Photo->room from capture time + contents, then one vision call per room"),
-    ("eval-4-hierarchical-caller-context.json", "v4: + what the caller said", "Room sorter also sees the caller's description of each room"),
-    ("eval-5-guided-capture.json", "v5: guided capture (simulated)", "Photos arrive tagged with their room, so each room goes straight to its own call"),
+VERSIONS = [  # (results file, short label, what changed)
+    ("eval-1-flat-haiku.json", "v1", "one call · Haiku"),
+    ("eval-2-flat-sonnet.json", "v2", "one call · Sonnet"),
+    ("eval-3-hierarchical.json", "v3", "one call per room"),
+    ("eval-4-hierarchical-caller-context.json", "v4", "+ caller's room descriptions"),
+    ("eval-5-guided-capture.json", "v5", "guided capture"),
+]
+HERO_PHOTO = {"bedroom": "IMG_7693", "den": "IMG_7701", "living room": "IMG_7697"}
+CALLERS = [  # (transcript, label, line quoted on the slide; checked against the transcript below)
+    ("01-prepared", "Prepared", "Maybe half an inch across the floor?"),
+    ("02-vague", "Vague", "I don't know where it came from."),
+    ("03-overclaim", "Overclaims", "In the bedroom it was over a foot. Easily."),
 ]
 
 
@@ -37,243 +44,433 @@ def summarize(rows: list[dict], truth: dict) -> dict:
     for r in ok:
         r["photo_room_acc"] = photo_room(r, truth)
     cut = [x["flood_cut_ok"] for r in ok for x in r["rooms"].values() if x["flood_cut_ok"] is not None]
-    walls_exact = [x["wet_walls"] == truth["rooms"][room]["wet_walls"] for r in ok for room, x in r["rooms"].items()]
     return {
-        "runs": len(rows), "failed": len(rows) - len(ok),
         "photo_room": median(r["photo_room_acc"] for r in ok),
-        "photo_room_by_t": {t: median(r["photo_room_acc"] for r in ok if r["transcript"] == t)
-                            for t in sorted({r["transcript"] for r in ok})},
+        "photo_room_liar": median(r["photo_room_acc"] for r in ok if r["transcript"] == "03-overclaim"),
         "cut": (sum(cut), len(cut)),
-        "walls_exact": (sum(walls_exact), len(walls_exact)),
         "walls": {room: [r["rooms"][room]["wet_walls"] for r in ok] for room in truth["rooms"]},
         "flags": (sum(r["flags_caught"] for r in ok), sum(r["flags_expected"] for r in ok)),
         "xact": (sum(r["xact_verified"] for r in ok), len(ok)),
         "repairs": sum(r["xact_repairs"] for r in ok),
         "usd": median(r["usd"] for r in ok),
+        "runs": len(ok),
     }
+
+
+def flag_text(f: dict) -> str:
+    if f.get("why"):
+        return f["why"]
+    return f["needs"] if f["room"] == "job" else f"{f['room']}: no {f['needs']}"
+
+
+def slide_rooms(truth: dict) -> str:
+    cols = ""
+    for room, t in truth["rooms"].items():
+        lo, hi = t["water_line_in"]
+        size = f"{t['area_sqft']} SF" if "area_sqft" in t else f"wall {t['affected_wall_lengths_in'][0]} in"
+        cols += (f'<figure class="room reveal"><img src="{PHOTOS}/{HERO_PHOTO[room]}.jpg" alt="">'
+                 f'<figcaption><b>{e(room.title())}</b><span>tape {lo}–{hi} in</span>'
+                 f'<span>{t["wet_walls"]} wet wall{"s" * (t["wet_walls"] > 1)}</span><span>{size}</span>'
+                 f'<span>{len(t["photos"])} photos</span></figcaption></figure>')
+    return cols
+
+
+def slide_callers(truth: dict) -> str:
+    cards = ""
+    for name, label, quote in CALLERS:
+        text = (CLAIM / "transcripts" / f"{name}.txt").read_text()
+        assert quote in text, f"quote not in {name}: {quote}"
+        chips = "".join(f"<li>{e(flag_text(f))}</li>" for f in truth["transcripts"][name]["expected_flags"])
+        cards += (f'<div class="caller reveal"><div class=mono>{e(name)}</div><h3>{e(label)}</h3>'
+                  f'<blockquote>“{e(quote)}”</blockquote><div class="mono dim">should flag</div><ul class=chips>{chips}</ul></div>')
+    return cards
+
+
+def slide_chart(versions: list) -> str:
+    groups = ""
+    for label, what, s in versions:
+        bars = "".join(
+            f'<div class="bar {cls}" style="height:{v * 100:.1f}%" title="{label} {name}: {v:.0%}"><span>{v:.0%}</span></div>'
+            for cls, name, v in [("all", "all callers", s["photo_room"]), ("liar", "overclaiming caller", s["photo_room_liar"])])
+        groups += (f'<div class="group{" hl" * (label == versions[-1][0])}"><div class=bars>{bars}</div>'
+                   f'<div class=xlab><b>{e(label)}</b><span>{e(what)}</span></div></div>')
+    return groups
+
+
+def slide_walls(final: dict, truth: dict) -> str:
+    rows, scale = "", 5
+    for room, t in truth["rooms"].items():
+        counts, true = final["walls"][room], t["wet_walls"]
+        seen: dict[int, int] = {}
+        dots = ""
+        for c in counts:
+            k = seen[c] = seen.get(c, -1) + 1
+            dx, dy = (k % 3 - 1) * 32, (k // 3 - 1) * 32
+            dots += (f'<i class="{"ok" if c == true else "off"}" '
+                     f'style="left:calc({c / scale * 100:.2f}% + {dx}px);top:{65 + dy}px"></i>')
+        name = room.title() + (" · L-shaped" if room == "den" else "")
+        exact = sum(c == true for c in counts)
+        rows += (f'<div class="wrow reveal"><div class=wname><b>{e(name)}</b><span>true: {true}</span></div>'
+                 f'<div class=track><div class=truth style="left:{true / scale * 100:.2f}%"></div>{dots}</div>'
+                 f'<div class=wscore>{exact}/{len(counts)}</div></div>')
+    ticks = "".join(f'<span style="left:{n / scale * 100}%">{n}</span>' for n in range(scale + 1))
+    return rows + f'<div class=wrow><div></div><div class=ticks>{ticks}</div><div></div></div>'
 
 
 def main():
     truth = json.loads((CLAIM / "truth.json").read_text())
-    versions = []
-    for f, label, what in VERSIONS:
-        p = ROOT / "results" / f
-        if p.exists():
-            versions.append((label, what, summarize(json.loads(p.read_text())["rows"], truth)))
-    final = versions[-1][2] if versions else None
+    versions = [(label, what, summarize(json.loads((ROOT / "results" / f).read_text())["rows"], truth))
+                for f, label, what in VERSIONS if (ROOT / "results" / f).exists()]
+    final, best_unguided = versions[-1][2], versions[-2][2]
+    n_photos = sum(len(t["photos"]) for t in truth["rooms"].values())
 
-    # --- inputs: photos by room, with the measured truth
-    rooms_html = ""
-    for room, t in truth["rooms"].items():
-        lo, hi = t["water_line_in"]
-        size = f"{t['area_sqft']} SF" if "area_sqft" in t else f"wet wall {t['affected_wall_lengths_in'][0]} in"
-        imgs = "".join(f'<img src="../data/claim-001/photos/{p}.jpg" alt="{p}" loading=lazy>' for p in t["photos"])
-        rooms_html += (f'<div class=room><div class=roomhead><b>{e(room.title())}</b>'
-                       f'<span>tape at {lo}–{hi} in · {t["wet_walls"]} wet wall{"s" * (t["wet_walls"] > 1)} · {size}</span></div>'
-                       f'<div class=strip>{imgs}</div></div>')
-
-    tx_html = ""
-    for name, t in truth["transcripts"].items():
-        first = next(l for l in (CLAIM / "transcripts" / f"{name}.txt").read_text().splitlines() if l.startswith("HOMEOWNER"))
-        traps = "".join(f"<li>{e(x.get('why') or (x['room'] + ': ' + x['needs']))}</li>" for x in t["expected_flags"])
-        tx_html += (f'<div class=card><div class=k>{e(name)}</div><p>{e(t["about"])}</p>'
-                    f'<p class=quote>"{e(first.split(":", 1)[1].strip()[:140])}…"</p>'
-                    f'<div class=k>Should be flagged</div><ul>{traps}</ul></div>')
-
-    # --- eval table
-    def cell(v, fmt):
-        return f"<td class=n>{fmt(v)}</td>"
-    head = "".join(f"<th class=n>{e(l)}<div class=sub>{e(w)}</div></th>" for l, w, _ in versions)
-    rows = [
-        ("Photo → correct room (median)", lambda s: f"{s['photo_room']:.0%}"),
-        ("&nbsp;&nbsp;on the lying caller (03)", lambda s: f"{s['photo_room_by_t'].get('03-overclaim', 0):.0%}"),
-        ("Flood-cut height right", lambda s: f"{s['cut'][0]}/{s['cut'][1]}"),
-        ("Wet-wall count exactly right", lambda s: f"{s['walls_exact'][0]}/{s['walls_exact'][1]}"),
-        ("&nbsp;&nbsp;bedroom walls per run (true 2)", lambda s: ", ".join(map(str, s["walls"]["bedroom"]))),
-        ("&nbsp;&nbsp;den walls per run (true 2, L-shaped)", lambda s: ", ".join(map(str, s["walls"]["den"]))),
-        ("&nbsp;&nbsp;living room walls per run (true 1)", lambda s: ", ".join(map(str, s["walls"]["living room"]))),
-        ("Expected review flags caught", lambda s: f"{s['flags'][0]}/{s['flags'][1]}"),
-        ("Xact read-back verified", lambda s: f"{s['xact'][0]}/{s['xact'][1]} <span class=sub>({s['repairs']} silent failures repaired)</span>"),
-        ("Cost per claim (median)", lambda s: f"${s['usd']:.3f}"),
-    ]
-    body = "".join(f"<tr><td>{label}</td>{''.join(cell(s, fn) for _, _, s in versions)}</tr>" for label, fn in rows)
-    eval_html = f"<div class=wrap><table class=eval><tr><th></th>{head}</tr>{body}</table></div>"
-
-    hero = ""
-    if final:
-        hero = "".join(f"<div class=stat><b>{v}</b><span>{l}</span></div>" for v, l in [
-            ("0 / 12", "public water-damage photos with a measurable water line"),
-            ("±0.5 in", "water line read off a tape measure in frame"),
-            (f"{final['cut'][0]}/{final['cut'][1]}", "flood-cut heights right with guided capture (9 runs × 3 rooms)"),
-            (f"{final['repairs']}", "silent Xact write failures caught by read-back"),
-            (f"${final['usd']:.2f}", "per claim, all model calls"),
-        ])
-
-    out = ROOT / "demo/walkthrough.html"
-    out.write_text(PAGE.format(rooms=rooms_html, transcripts=tx_html, eval=eval_html, hero=hero,
-                               n_photos=sum(len(t["photos"]) for t in truth["rooms"].values())))
+    page = PAGE
+    for k, v in {
+        "ROOMS": slide_rooms(truth), "CALLERS": slide_callers(truth), "CHART": slide_chart(versions),
+        "WALLS": slide_walls(final, truth), "N_PHOTOS": str(n_photos), "RUNS": str(final["runs"]),
+        "CUT": "{}/{}".format(*final["cut"]), "FLAGS": "{}/{}".format(*final["flags"]),
+        "XACT": "{}/{}".format(*final["xact"]), "REPAIRS": str(final["repairs"]), "USD": f"${final['usd']:.2f}",
+        "UNGUIDED_ROOM": f"{best_unguided['photo_room']:.0%}", "PHOTOS": PHOTOS,
+    }.items():
+        page = page.replace(f"%%{k}%%", v)
+    out = ROOT / "demo/deck.html"
+    out.write_text(page)
     print(out)
 
 
-PAGE = """<!doctype html><html lang=en><head><meta charset=utf-8>
+PAGE = r"""<!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1"><title>Xact Agent POC</title>
+<link rel=preconnect href="https://fonts.googleapis.com"><link rel=preconnect href="https://fonts.gstatic.com" crossorigin>
+<link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>
-:root{{--bg:#f7f6f3;--fg:#1c1b19;--mut:#6b6862;--line:#e3e0da;--card:#fff;--acc:#1d4ed8;--ok:#15803d;--warn:#b45309;--soft:#eef2ff}}
-@media (prefers-color-scheme:dark){{:root:not([data-theme=light]){{--bg:#161514;--fg:#f2f0ec;--mut:#a29e97;--line:#34322f;--card:#201f1d;--acc:#93b4ff;--ok:#4ade80;--warn:#fbbf24;--soft:#1e2433}}}}
-:root[data-theme=dark]{{--bg:#161514;--fg:#f2f0ec;--mut:#a29e97;--line:#34322f;--card:#201f1d;--acc:#93b4ff;--ok:#4ade80;--warn:#fbbf24;--soft:#1e2433}}
-*{{box-sizing:border-box}} body{{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 Inter,system-ui,sans-serif}}
-main{{max-width:1080px;margin:0 auto;padding:40px 16px 120px}}
-section{{padding:56px 0 8px;border-top:1px solid var(--line)}} section:first-of-type{{border:0;padding-top:8px}}
-h1{{font-size:40px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}} h2{{font-size:28px;margin:0 0 6px;letter-spacing:-.01em}}
-.step{{color:var(--acc);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}}
-.lede{{font-size:20px;color:var(--mut);max-width:780px}} .mut,.sub{{color:var(--mut)}} .sub{{font-size:12px;font-weight:400}}
-.grid{{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:18px}}
-.card{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}}
-.card p{{margin:6px 0}} .card ul{{margin:4px 0 0;padding-left:18px}}
-.k{{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:6px}}
-.quote{{font-style:italic;color:var(--mut)}}
-.breaks{{counter-reset:b}} .breaks .card > b{{display:block;font-size:19px}}
-.room{{margin:18px 0}} .roomhead{{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}} .roomhead span{{color:var(--mut)}}
-.strip{{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}} .strip img{{height:150px;border-radius:6px;flex:none}}
-.wrap{{overflow-x:auto}} table{{border-collapse:collapse;width:100%;background:var(--card);border-radius:12px;overflow:hidden}}
-td,th{{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}}
-.n{{text-align:right;font-variant-numeric:tabular-nums}} table.eval td:last-child,table.eval th:last-child{{background:var(--soft)}}
-.stats{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:22px 0}}
-.stat{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}}
-.stat b{{display:block;font-size:30px;letter-spacing:-.02em}} .stat span{{color:var(--mut);font-size:14px}}
-.flow{{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:18px 0}}
-.box{{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;flex:1 1 120px;font-size:14px}}
-.box b{{display:block}} .box.code{{border-color:var(--ok)}} .arrow{{align-self:center;color:var(--mut)}}
-pre{{background:#111;color:#e6e6e6;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:15px}}
-.phones{{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:12px 2px 18px}}
-.phone{{flex:none;width:190px;height:420px;border-radius:34px;border:10px solid #1b1b1b;background:#fff;color:#111;
-  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:14px}}
-.phone .bar{{padding:10px 14px 6px;font-weight:700;font-size:15px}} .phone .bar small{{display:block;font-weight:400;color:#666;font-size:12px}}
-.phone .view{{flex:1;margin:6px 10px;border-radius:12px;background:#ddd center/cover;position:relative}}
-.phone .tag{{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.72);color:#fff;border-radius:8px;padding:6px 8px;font-size:12px}}
-.phone .tag.ok{{background:rgba(21,128,61,.9)}} .phone .tag.warn{{background:rgba(180,83,9,.92)}}
-.guide{{position:absolute;left:0;right:0;border-top:2px dashed #fde047}}
-.chips{{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px}} .chip{{border:1px solid #ccc;border-radius:99px;padding:6px 10px}}
-.chip.on{{background:#1d4ed8;color:#fff;border-color:#1d4ed8}}
-.phone .btn{{margin:8px 12px 14px;background:#1d4ed8;color:#fff;text-align:center;border-radius:10px;padding:10px;font-weight:600}}
-.plan{{position:absolute;inset:14px;border:3px solid #1d4ed8;border-radius:4px}}
-.plan i{{position:absolute;background:#ef4444;height:5px;border-radius:3px}}
-.legend{{font-size:12px;color:#444;padding:0 12px}}
-footer{{margin-top:48px;color:var(--mut)}} a{{color:var(--acc)}}
-</style></head><body><main>
+:root{--stage-bg:#0c0d0f;--slide-bg:#14161a;--panel:#1c1f24;--line:#2d3138;--ink:#f1ede4;--dim:#9aa0a8;
+  --tape:#e6d3a3;--accent:#f2c230;--model:#4f8de0;--code:#f2c230;--liar:#c27c0e;--ok:#4f8de0;--off:#6b7079;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--pad:110px}
+*{margin:0;padding:0;box-sizing:border-box}
+/* fixed 16:9 stage (frontend-slides viewport-base) */
+html,body{width:100%;height:100%;overflow:hidden;background:var(--stage-bg)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--slide-bg)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;visibility:hidden;opacity:0;pointer-events:none;
+  background:var(--slide-bg);transition:opacity .35s ease;padding:var(--pad);display:flex;flex-direction:column}
+.slide.active{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img{max-width:100%;max-height:100%}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media print{html,body{overflow:visible;height:auto}.deck-viewport{position:static}.deck-stage{position:static;transform:none!important}
+  .slide{position:relative;visibility:visible!important;opacity:1!important;break-after:page}.counter{display:none}}
 
-<section>
-<div class=step>Cozmo FDE · Ozair Khan</div>
-<h1>An agent enters a water damage estimate into Xact from a call transcript and 40 photos. What breaks first?</h1>
-<p class=lede><b>Missing information breaks first.</b> I built the agent, staged a water loss in my basement with measured ground truth,
-and scored every version. The fix that mattered most wasn't a smarter model. It was <b>controlling how the photos are captured</b>.</p>
-<div class=stats>{hero}</div>
+body{color:var(--ink);font-family:var(--display)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.slide.active .reveal{opacity:1;transform:none}
+.slide.active .reveal:nth-child(2){transition-delay:.08s}.slide.active .reveal:nth-child(3){transition-delay:.16s}
+.slide.active .reveal:nth-child(4){transition-delay:.24s}.slide.active .reveal:nth-child(5){transition-delay:.32s}
+.slide.active .reveal:nth-child(6){transition-delay:.4s}
+.mono{font-family:var(--mono);font-size:24px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.dim{color:var(--dim)}
+h1{font-size:128px;line-height:1;font-weight:800;letter-spacing:-.035em}
+h2{font-size:84px;line-height:1.02;font-weight:800;letter-spacing:-.03em;margin:18px 0 0}
+h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
+.hl-text{color:var(--accent)}
+.foot{margin-top:auto;font-family:var(--mono);font-size:28px;color:var(--dim)}
+.body{flex:1;display:flex;gap:56px;margin-top:56px;min-height:0}
+
+/* tape strip motif */
+.tape{position:absolute;left:-40px;right:-40px;height:74px;background:var(--tape);opacity:.92;transform:rotate(-1.2deg);
+  display:flex;align-items:center;padding-left:150px;font-family:var(--mono);font-size:24px;letter-spacing:.3em;color:#3b3220;
+  box-shadow:0 2px 0 rgba(0,0,0,.25);
+  -webkit-mask:linear-gradient(90deg,transparent 0,#000 30px,#000 calc(100% - 30px),transparent 100%)}
+
+/* 1 title */
+.title h1{margin-top:auto;max-width:1600px}
+.title h1 + h1{margin-top:20px;margin-bottom:220px}
+.title .tape{bottom:150px}
+
+/* 2 hero numbers */
+.split{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:56px;min-height:0}
+.big{display:flex;flex-direction:column;justify-content:center;gap:20px}
+.big b{font-size:260px;line-height:.9;font-weight:800;letter-spacing:-.05em}
+.big span{font-size:40px;line-height:1.2;color:var(--dim);max-width:720px}
+.photo{position:relative;border-radius:18px;overflow:hidden;background:var(--panel)}
+.photo img{width:100%;height:100%;object-fit:cover;max-height:none}
+.photo .tag{position:absolute;left:24px;bottom:24px;background:rgba(10,11,13,.82);padding:14px 20px;border-radius:10px;
+  font-family:var(--mono);font-size:28px}
+.photo .tag b{color:var(--accent);font-weight:600}
+
+/* 3 rooms */
+.rooms{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px;min-height:0}
+.room{display:flex;flex-direction:column;gap:22px;min-height:0}
+.room img{flex:1;min-height:0;width:100%;object-fit:cover;border-radius:16px;max-height:none}
+.room figcaption{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:baseline;font-family:var(--mono);font-size:24px;color:var(--dim)}
+.room figcaption b{width:100%;font-family:var(--display);font-size:44px;color:var(--ink);letter-spacing:-.02em}
+.room figcaption span:first-of-type{color:var(--accent)}
+
+/* 4 callers */
+.callers{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:56px}
+.caller{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:44px;display:flex;flex-direction:column;gap:18px}
+.caller blockquote{font-size:40px;line-height:1.2;font-weight:600;margin:10px 0 auto;padding-bottom:28px}
+.chips{list-style:none;display:flex;flex-direction:column;gap:12px}
+.chips li{font-family:var(--mono);font-size:22px;line-height:1.3;border-left:5px solid var(--accent);padding:10px 16px;background:#24282e;border-radius:0 8px 8px 0}
+
+/* 5 pipeline */
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-top:100px}
+.step{border:3px solid var(--model);border-radius:18px;padding:36px 30px;min-height:440px;display:flex;flex-direction:column;gap:14px;position:relative}
+.step.code{border-color:var(--code);background:rgba(242,194,48,.07)}
+.step .n{font-family:var(--mono);font-size:26px;color:var(--dim)}
+.step b{font-size:44px;line-height:1.1;letter-spacing:-.01em}
+.step .who{margin-top:auto;font-family:var(--mono);font-size:28px;font-weight:600;color:var(--model)}
+.step.code .who{color:var(--code)}
+.step .calls{font-family:var(--mono);font-size:24px;line-height:1.35;color:var(--dim)}
+.step.skip{border-style:dashed}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-21px;top:50%;transform:translate(50%,-50%);font-size:30px;color:var(--dim)}
+.legend{display:flex;gap:40px;margin-top:48px;font-family:var(--mono);font-size:24px;color:var(--dim)}
+.legend i{display:inline-block;width:22px;height:22px;border-radius:5px;border:3px solid var(--model);margin-right:12px;vertical-align:-4px}
+.legend i.c{border-color:var(--code);background:rgba(242,194,48,.15)}
+.legend i.s{border-style:dashed}
+
+/* 6 live */
+.term{margin-top:70px;background:#0b0c0e;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.term .bar{height:52px;background:#202329;display:flex;gap:12px;align-items:center;padding:0 22px}
+.term .bar i{width:16px;height:16px;border-radius:50%;background:#3a3f47}
+.term pre{font-family:var(--mono);font-size:34px;line-height:1.5;padding:44px 48px;white-space:pre-wrap;color:var(--ink)}
+.term pre .p{color:var(--accent)}.term pre .c{color:var(--dim)}
+.params{display:flex;gap:28px;margin-top:48px}
+.params div{flex:1;border-top:4px solid var(--accent);padding-top:20px;font-size:36px;font-weight:600}
+.params span{display:block;font-family:var(--mono);font-size:22px;color:var(--dim);font-weight:400;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+
+/* 7 chart */
+.chart{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:28px;margin-top:40px;min-height:0;position:relative;
+  border-bottom:2px solid var(--line);padding:0 10px}
+.chart .gridline{position:absolute;left:0;right:0;border-top:1px dashed var(--line)}
+.chart .gridline span{position:absolute;right:100%;margin-right:14px;transform:translateY(-50%);font-family:var(--mono);font-size:20px;color:var(--dim)}
+.group{display:flex;flex-direction:column;min-height:0;border-radius:14px 14px 0 0;padding:0 18px}
+.group.hl{background:rgba(242,194,48,.06)}
+.bars{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:6px;min-height:0}
+.bar{width:96px;border-radius:6px 6px 0 0;position:relative}
+.bar.all{background:var(--model)}.bar.liar{background:var(--liar)}
+.bar span{position:absolute;bottom:100%;left:0;right:0;text-align:center;padding-bottom:10px;font-family:var(--mono);font-size:26px;font-weight:600;color:var(--ink)}
+.group{position:relative}
+.xlab{position:absolute;left:0;right:0;bottom:-118px;text-align:center}
+.xlab b{display:block;font-size:34px}.xlab span{font-family:var(--mono);font-size:20px;color:var(--dim)}
+.chartwrap{flex:1;display:flex;flex-direction:column;min-height:0;padding:0 0 130px 70px}
+.key{display:flex;gap:40px;justify-content:flex-end;font-family:var(--mono);font-size:24px;color:var(--dim);margin-top:24px}
+.key i{display:inline-block;width:22px;height:22px;border-radius:4px;margin-right:12px;vertical-align:-3px}
+
+/* 8 guided numbers */
+.tiles{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:70px;align-content:center}
+.tile{border-top:6px solid var(--accent);padding-top:34px}
+.tile b{display:block;font-size:150px;line-height:.95;font-weight:800;letter-spacing:-.04em}
+.tile span{display:block;margin-top:22px;font-size:34px;line-height:1.25;color:var(--dim)}
+
+/* 9 wall dots */
+.walls{margin-top:60px;display:flex;flex-direction:column;gap:24px}
+.wrow{display:grid;grid-template-columns:420px 1fr 160px;align-items:center;gap:40px}
+.wname b{display:block;font-size:44px;letter-spacing:-.02em}.wname span{font-family:var(--mono);font-size:22px;color:var(--dim)}
+.track{position:relative;height:150px;border-bottom:1px solid var(--line)}
+.track i{position:absolute;width:26px;height:26px;border-radius:50%;transform:translate(-50%,-50%)}
+.track i.ok{background:var(--ok)}.track i.off{background:transparent;border:4px solid var(--off)}
+.truth{position:absolute;top:-6px;bottom:-6px;width:6px;margin-left:-3px;background:var(--accent);border-radius:3px;opacity:.9}
+.wscore{font-family:var(--mono);font-size:44px;font-weight:600;text-align:right}
+.ticks{position:relative;height:30px}
+.ticks span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:22px;color:var(--dim)}
+.wkey{display:flex;gap:40px;margin-top:40px;font-family:var(--mono);font-size:24px;color:var(--dim)}
+.wkey i{display:inline-block;width:22px;height:22px;border-radius:50%;margin-right:12px;vertical-align:-4px}
+
+/* 10 capture mockup */
+.phones{flex:1;display:flex;justify-content:space-between;align-items:center;margin-top:30px}
+.phone{width:310px;height:660px;border-radius:46px;border:12px solid #050505;background:#fff;color:#111;display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45);font-family:var(--display);font-size:20px}
+.phone .top{padding:22px 22px 8px;font-weight:800;font-size:25px;line-height:1.15}
+.phone .top small{display:block;font-weight:400;color:#666;font-size:18px;margin-top:4px}
+.phone .view{flex:1;margin:10px 14px;border-radius:16px;background:#ddd center/cover;position:relative}
+.phone .btn{margin:10px 18px 22px;background:#1b1d22;color:#fff;text-align:center;border-radius:14px;padding:16px;font-weight:600}
+.phone .chips2{display:flex;flex-wrap:wrap;gap:8px;padding:6px 18px}
+.phone .chips2 span{border:1.5px solid #ccc;border-radius:99px;padding:8px 14px;font-size:18px}
+.phone .chips2 span.on{background:#1b1d22;color:#fff;border-color:#1b1d22}
+.phone .line{position:absolute;left:0;right:0;border-top:3px dashed var(--accent)}
+.phone .read{position:absolute;left:12px;right:12px;bottom:12px;background:#15803d;color:#fff;border-radius:10px;padding:12px;font-size:19px;font-weight:600}
+.phone .plan{position:absolute;inset:26px;border:4px solid #1b1d22;border-radius:4px}
+.phone .plan i{position:absolute;background:#e11d48;border-radius:3px}
+.phone .list{padding:22px;font-size:19px;line-height:1.9}
+.cap{display:flex;justify-content:space-between;margin-top:26px}
+.cap div{width:310px;text-align:center;font-family:var(--mono);font-size:22px;color:var(--accent)}
+
+/* 11 what closes each gap */
+table{width:100%;border-collapse:collapse;margin-top:60px;font-size:32px}
+th{text-align:left;font-family:var(--mono);font-size:22px;font-weight:400;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;padding:0 24px 22px}
+td{padding:26px 24px;border-top:1px solid var(--line)}
+td:first-child{font-weight:600}
+td .x{color:var(--dim)}td .x::before{content:"✗ ";color:#e66767}
+td .w::before{content:"~ ";color:var(--accent)}
+td .v::before{content:"✓ ";color:#4ade80}
+td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
+
+/* 12 close */
+.close h1{margin-top:auto;font-size:116px;max-width:1500px}
+.close h1 + h1{margin-top:16px;margin-bottom:200px;color:var(--accent)}
+.close .tape{bottom:300px;transform:rotate(1deg)}
+.close .foot{display:flex;justify-content:space-between;font-size:28px;color:var(--ink)}
+
+.counter{position:fixed;right:18px;bottom:12px;z-index:10;font:13px var(--mono);color:#555}
+</style></head><body>
+<div class=deck-viewport><main class=deck-stage id=stage>
+
+<section class="slide title active">
+<div class="mono reveal">Ozair Khan · Cozmo FDE</div>
+<h1 class=reveal>Call transcript + 40 photos → an Xact estimate.</h1>
+<h1 class="reveal hl-text">What breaks first?</h1>
+<div class=tape>WATER LINE · WATER LINE · WATER LINE · WATER LINE · WATER LINE · WATER LINE</div>
 </section>
 
-<section>
-<div class=step>Step 1 · Assumptions</div>
-<h2>What the question leaves open</h2>
-<div class=grid>
-<div class=card><div class=k>The call</div><p>A homeowner calling in to report the loss: first notice of loss, not a tech.</p></div>
-<div class=card><div class=k>The photos</div><p>Unspecified, so I tested both. <b>Unguided</b> public photos, and <b>guided</b> photos shot the way a tech or a capture app would.</p></div>
-<div class=card><div class=k>Xact</div><p>No public write API. Mocked as a server that <b>silently drops or corrupts 15% of writes</b>, like a flaky import or UI automation.</p></div>
-<div class=card><div class=k>Prices</div><p>Illustrative codes modeled on Xactimate's WTR category. The quantities and logic are the point.</p></div>
+<section class=slide>
+<div class="mono reveal">01 · What breaks first</div>
+<h2 class=reveal>Missing information.</h2>
+<div class=split>
+<div class="big reveal"><b>0/12</b><span>public water-damage photos with a measurable water line</span></div>
+<div class="photo reveal"><img src="%%PHOTOS%%/IMG_7711.jpg" alt=""><div class=tag>tape measure in frame → <b>±0.5 in</b></div></div>
 </div>
 </section>
 
-<section>
-<div class=step>Step 2 · What breaks, in the order it breaks</div>
-<h2>Three failure points, three designs</h2>
-<div class="grid breaks">
-<div class=card><b>1. Missing information</b><p>Calls and photos rarely contain the measurements an estimate needs. A model fills gaps with confident numbers.</p>
-<div class=k>Design</div><p>Measurements only count with a named reference (outlet, door, tape measure). Facts only count with a quote. <b>Code computes every quantity</b>. Gaps go to a review queue.</p></div>
-<div class=card><b>2. Context and duplicates</b><p>40 photos in one call is expensive, and the same wall gets billed again from every angle.</p>
-<div class=k>Design</div><p>Hierarchical: a cheap model per photo, then photo→room, then one vision call per room to count distinct walls.</p></div>
-<div class=card><b>3. Silent write failures</b><p>A 200 OK from Xact proves nothing.</p>
-<div class=k>Design</div><p>Write, <b>read back, diff</b>, remove corrupted lines, retry until it matches.</p></div>
+<section class=slide>
+<div class="mono reveal">02 · Test case · %%N_PHOTOS%% photos, measured ground truth</div>
+<h2 class=reveal>A staged water loss in my basement.</h2>
+<div class=rooms>%%ROOMS%%</div>
+</section>
+
+<section class=slide>
+<div class="mono reveal">03 · Same photos, three callers</div>
+<h2 class=reveal>Each call hides something.</h2>
+<div class=callers>%%CALLERS%%</div>
+</section>
+
+<section class=slide>
+<div class="mono reveal">04 · Pipeline · no call sees all 40 photos</div>
+<h2 class=reveal>Models look. Code does the math.</h2>
+<div class="flow reveal">
+<div class=step><span class=n>0</span><b>Call → facts</b><span class=calls>1 call · every fact quoted</span><span class=who>Sonnet</span></div>
+<div class=step><span class=n>1</span><b>Each photo</b><span class=calls>1 call per photo</span><span class=who>Haiku</span></div>
+<div class="step skip"><span class=n>2a</span><b>Photo → room</b><span class=calls>skipped when photos arrive tagged</span><span class=who>Sonnet</span></div>
+<div class=step><span class=n>2b</span><b>Room → walls</b><span class=calls>1 call per room</span><span class=who>Sonnet</span></div>
+<div class="step code"><span class=n>3</span><b>Quantities</b><span class=calls>flood cut, SF, LF, days</span><span class=who>code</span></div>
+<div class="step code"><span class=n>4</span><b>Write → read back</b><span class=calls>diff, repair, retry</span><span class=who>code</span></div>
+</div>
+<div class="legend reveal"><span><i></i>model</span><span><i class=c></i>code</span><span><i class=s></i>guided capture removes it</span></div>
+<div class="foot reveal">gaps and contradictions → human review queue</div>
+</section>
+
+<section class=slide>
+<div class="mono reveal">05 · Live</div>
+<h2 class=reveal>One run, end to end.</h2>
+<div class="term reveal"><div class=bar><i></i><i></i><i></i></div>
+<pre><span class=p>$</span> uv run run.py data/claim-001 \
+    --transcript 03-overclaim --guided --xact-fault-rate 0.3
+<span class=c>→ out/claim-001/03-overclaim/report.html</span></pre></div>
+<div class="params reveal">
+<div><span>Caller</span>Overclaims</div>
+<div><span>Photos</span>Tagged by room</div>
+<div><span>Mock Xact</span>30% of writes silently fail</div>
 </div>
 </section>
 
-<section>
-<div class=step>Step 3 · The test case</div>
-<h2>A staged water loss with known answers</h2>
-<p class=mut>{n_photos} photos of my basement. Tape marks the water line at heights I measured; room areas come from a professional flooring measure.
-Three different callers describe the same loss.</p>
-{rooms}
-<div class=grid>{transcripts}</div>
+<section class=slide>
+<div class="mono reveal">06 · Five versions × 9 runs, scored against truth</div>
+<h2 class=reveal>Photos sorted into the right room</h2>
+<div class="chartwrap reveal">
+<div class=key><span><i style="background:var(--model)"></i>all callers (median)</span><span><i style="background:var(--liar)"></i>overclaiming caller</span></div>
+<div class=chart style="margin-top:60px">
+<div class=gridline style="top:0"><span>100%</span></div><div class=gridline style="top:50%"><span>50%</span></div>
+%%CHART%%
+</div></div>
 </section>
 
-<section>
-<div class=step>Step 4 · Run it</div>
-<h2>Transcript + photos → estimate in Xact</h2>
-<div class=flow>
-<div class=box><b>0 · Call → facts</b>Sonnet, every fact quoted</div><div class=arrow>→</div>
-<div class=box><b>1 · Per photo</b>Haiku, 1 photo per call, ~1.2k tokens</div><div class=arrow>→</div>
-<div class=box><b>2a · Photo → room</b>skipped with guided capture; else capture time, contents, caller's description</div><div class=arrow>→</div>
-<div class=box><b>2b · Room → walls</b>1 vision call per room</div><div class=arrow>→</div>
-<div class="box code"><b>3 · Quantities</b>plain code, no model</div><div class=arrow>→</div>
-<div class="box code"><b>4 · Write + read back</b>diff and repair</div>
+<section class=slide>
+<div class="mono reveal">07 · v5 guided capture · %%RUNS%% runs</div>
+<h2 class=reveal>Right every time it had evidence.</h2>
+<div class=tiles>
+<div class="tile reveal"><b>%%CUT%%</b><span>flood-cut heights right</span></div>
+<div class="tile reveal"><b>%%FLAGS%%</b><span>review flags caught</span></div>
+<div class="tile reveal"><b>%%XACT%%</b><span>Xact read-backs verified, %%REPAIRS%% silent write failures repaired</span></div>
+<div class="tile reveal"><b>%%USD%%</b><span>per claim, all model calls</span></div>
 </div>
-<pre>uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.3</pre>
-<p class=mut>Then open <code>out/claim-001/03-overclaim/report.html</code>: review queue, line items with source photos, Xact repair log, cost.</p>
 </section>
 
-<section>
-<div class=step>Step 5 · Measured, not demoed</div>
-<h2>Each version, 3 callers × 3 runs, scored against the truth</h2>
-<p class=mut>One good run proves nothing. The parts owned by code (review flags, Xact verification) were solid from v1.
-Grouping photos was the weak link. Splitting work per room (v3) fixed wall counting; telling look-alike rooms apart stayed hard until
-photos arrived tagged (v5). v5 simulates room tags only: the den, an L-shaped room, still over-counts walls, which a
-one-step-per-wall capture flow would fix.</p>
-{eval}
-<p class=mut>Humans get this wrong too: an hour after the shoot I mislabeled 3 of my own 23 photos. Capture timestamps and visible furniture corrected it.</p>
+<section class=slide>
+<div class="mono reveal">08 · v5 guided capture · still open</div>
+<h2 class=reveal>Wet walls counted, per run</h2>
+<div class=walls>%%WALLS%%</div>
+<div class="wkey reveal"><span><i style="background:var(--ok)"></i>correct</span><span><i style="border:4px solid var(--off)"></i>wrong</span><span><i style="background:var(--accent);border-radius:3px;width:8px"></i>true count</span></div>
 </section>
 
-<section>
-<div class=step>Step 6 · The real fix</div>
-<h2>Own the capture, not just the inference</h2>
-<p class=lede>Every hard problem above traces back to information the photos never carried. A guided capture flow puts it there.</p>
-<p class=mut><b>Concept mockup, not built.</b> Photos are from the real claim; scan numbers are illustrative.</p>
-<div class=phones>
-<div class=phone><div class=bar>Which room are you in?<small>Room 2 of 3 · from your call</small></div>
-<div class=chips><span class=chip>Bedroom ✓</span><span class="chip on">Den</span><span class=chip>Living room</span><span class=chip>+ Other</span></div>
-<div class=view style="background-image:url(../data/claim-001/photos/IMG_7701.jpg)"><div class=tag>Every photo arrives tagged with its room. No sorting needed.</div></div>
-<div class=btn>Start den</div></div>
-<div class=phone><div class=bar>Wet wall 1<small>Stand back so the whole wall fits</small></div>
-<div class=view style="background-image:url(../data/claim-001/photos/IMG_7703.jpg)"><div class=guide style="top:76%"></div><div class=tag>One step per wall, so the count is exact.</div></div>
-<div class=btn>Capture · next wall</div></div>
-<div class=phone><div class=bar>Measure the water line<small>Hold a tape measure at the line</small></div>
-<div class=view style="background-image:url(../data/claim-001/photos/IMG_7709.jpg)"><div class="tag ok">Tape reads ≈10 in ✓ → 2 ft flood cut</div></div>
-<div class=btn>Looks right</div></div>
-<div class=phone><div class=bar>Scan the room<small>Walk the edge slowly · LiDAR</small></div>
-<div class=view style="background:#f1f5f9"><div class=plan><i style="left:-3px;top:10%;width:5px;height:60%"></i><i style="left:20%;bottom:-3px;width:55%"></i></div>
-<div class="tag ok">Den 265 SF · wet walls 14.2 ft + 11.0 ft</div></div>
-<div class=legend>Red = wet walls marked during capture</div>
-<div class=btn>Send to estimator</div></div>
-<div class=phone><div class=bar>Tech checklist<small>Generated from the review queue</small></div>
-<div class=view style="background:#fff;padding:10px;font-size:13px;line-height:1.5">
-☐ Bedroom closet: moisture reading<br>☐ Confirm den has 2 wet walls<br>☐ Living room area<br>☐ Confirm water category with source photo
-<div class="tag warn">Whatever's left becomes on-site instructions</div></div>
-<div class=btn>Start site visit</div></div>
+<section class=slide>
+<div class="mono reveal">09 · Concept · guided capture app</div>
+<h2 class=reveal>Own the capture.</h2>
+<div class="phones reveal">
+<div class=phone><div class=top>Which room?<small>Room 2 of 3 · from the call</small></div>
+<div class=chips2><span>Bedroom ✓</span><span class=on>Den</span><span>Living room</span><span>+ Other</span></div>
+<div class=view style="background-image:url(%%PHOTOS%%/IMG_7701.jpg)"></div><div class=btn>Start den</div></div>
+<div class=phone><div class=top>Wet wall 1 of ?<small>Whole wall in frame</small></div>
+<div class=view style="background-image:url(%%PHOTOS%%/IMG_7703.jpg)"><div class=line style="top:76%"></div></div><div class=btn>Next wall</div></div>
+<div class=phone><div class=top>Water line<small>Tape measure at the line</small></div>
+<div class=view style="background-image:url(%%PHOTOS%%/IMG_7709.jpg)"><div class=read>10 in ✓ → 2 ft flood cut</div></div><div class=btn>Looks right</div></div>
+<div class=phone><div class=top>Scan the room<small>LiDAR · walk the edge</small></div>
+<div class=view style="background:#f1f5f9"><div class=plan><i style="left:-4px;top:10%;width:6px;height:60%"></i><i style="left:20%;bottom:-4px;width:55%;height:6px"></i></div>
+<div class=read>265 SF · wet 14.2 + 11.0 ft</div></div><div class=btn>Send</div></div>
+<div class=phone><div class=top>Tech checklist<small>From the review queue</small></div>
+<div class="view list" style="background:#fff">☐ Bedroom closet: moisture<br>☐ Den: confirm 2 wet walls<br>☐ Living room: area<br>☐ Water category</div>
+<div class=btn>Start visit</div></div>
 </div>
-<div class=wrap><table>
-<tr><th>Input the estimate needs</th><th>Call + unguided photos</th><th>Guided capture</th><th>Fully closed by</th></tr>
-<tr><td>Which room each photo shows</td><td>Inferred, flagged when unsure</td><td><b>Tagged at capture</b></td><td></td></tr>
-<tr><td>How many walls are wet</td><td>Over-counted</td><td><b>One step per wall</b></td><td></td></tr>
-<tr><td>Water line → flood-cut height</td><td>±2–4 in from outlets/baseboards</td><td><b>±0.5 in</b> with a tape measure</td><td></td></tr>
-<tr><td>Wall lengths, room area</td><td>Missing</td><td>Missing</td><td><b>LiDAR room scan</b> or an existing plan</td></tr>
-<tr><td>Moisture behind walls, unchecked areas</td><td>Unknown</td><td>Unknown</td><td><b>Tech with a meter</b>, via the checklist</td></tr>
-</table></div>
+<div class="cap reveal"><div>room tag</div><div>one step per wall</div><div>±0.5 in</div><div>lengths, area</div><div>what's left</div></div>
 </section>
 
-<section>
-<div class=step>Takeaway</div>
-<h2>Right wherever there's evidence, and explicit about the rest</h2>
-<p class=lede>The agent writes a draft estimate that is correct wherever it has evidence. Every remaining gap becomes a specific
-instruction for whoever is on site. An agent that knows which 10% it's unsure about beats one that's confident about everything.</p>
-<footer>Code, data and every eval run: <a href="https://github.com/Ozdotdotdot/xact-agent-poc">github.com/Ozdotdotdot/xact-agent-poc</a> · Ozair Khan</footer>
+<section class=slide>
+<div class="mono reveal">10 · What closes each gap</div>
+<h2 class=reveal>Capture fixes most of it. A tech closes the rest.</h2>
+<table class=reveal>
+<tr><th>The estimate needs</th><th>Call + photos</th><th>Guided capture</th><th>Then</th></tr>
+<tr><td>Room for each photo</td><td><span class=w>inferred · %%UNGUIDED_ROOM%%</span></td><td><span class=v>tagged</span></td><td></td></tr>
+<tr><td>Number of wet walls</td><td><span class=x>over-counted</span></td><td><span class=v>one step per wall</span></td><td></td></tr>
+<tr><td>Flood-cut height</td><td><span class=w>±2–4 in from outlets</span></td><td><span class=v>±0.5 in, tape</span></td><td></td></tr>
+<tr><td>Wall lengths, room area</td><td><span class=x>missing</span></td><td><span class=x>missing</span></td><td class=closer>LiDAR scan</td></tr>
+<tr><td>Moisture behind walls</td><td><span class=x>unknown</span></td><td><span class=x>unknown</span></td><td class=closer>tech + meter</td></tr>
+</table>
 </section>
-</main></body></html>"""
+
+<section class="slide close">
+<h1 class=reveal>Right wherever there's evidence.</h1>
+<h1 class=reveal>Explicit about the rest.</h1>
+<div class=tape>WATER LINE · WATER LINE · WATER LINE · WATER LINE · WATER LINE · WATER LINE</div>
+<div class="foot reveal"><span>github.com/Ozdotdotdot/xact-agent-poc</span><span>Ozair Khan</span></div>
+</section>
+
+</main></div>
+<div class=counter id=counter></div>
+<script>
+const stage = document.getElementById('stage'), slides = [...document.querySelectorAll('.slide')], counter = document.getElementById('counter');
+let cur = 0;
+function fit() {
+  const f = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(${(innerWidth - 1920 * f) / 2}px,${(innerHeight - 1080 * f) / 2}px) scale(${f})`;
+}
+function show(i) {
+  cur = Math.max(0, Math.min(i, slides.length - 1));
+  slides.forEach((s, j) => s.classList.toggle('active', j === cur));
+  counter.textContent = `${cur + 1} / ${slides.length}`;
+  history.replaceState(null, '', '#' + (cur + 1));
+}
+addEventListener('resize', fit);
+addEventListener('keydown', ev => {
+  if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(ev.key)) { ev.preventDefault(); show(cur + 1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(ev.key)) { ev.preventDefault(); show(cur - 1); }
+  else if (ev.key === 'Home') show(0);
+  else if (ev.key === 'End') show(slides.length - 1);
+  else if (ev.key === 'f' || ev.key === 'F') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+});
+let tx = null;
+addEventListener('touchstart', ev => tx = ev.touches[0].clientX, {passive: true});
+addEventListener('touchend', ev => { if (tx === null) return; const d = ev.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) show(cur + (d < 0 ? 1 : -1)); tx = null; });
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body></html>"""
 
 if __name__ == "__main__":
     main()
