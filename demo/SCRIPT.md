@@ -16,34 +16,36 @@ xdg-open demo/deck.html        # F = fullscreen, arrow keys / space to move
 ```
 
 Two windows: the **deck** (fullscreen) and a **terminal** in the repo with the font size turned up.
-To show the photo stage running live too, run `rm out/claim-001/observations.*.json` first (adds ~30 s and about 3¢).
+
+## The story in one breath
+
+Public photos don't carry the measurements an estimate needs, so I staged a loss where I know the answers. I stress-tested it with three callers and iterated five versions. Better models helped, but the step that kept failing was knowing which room a photo is from, and that's a capture problem. So the fix is to own the capture.
 
 ## Slide by slide
-
-The slides carry the numbers. You say the "why" in one or two lines.
 
 | # | Slide | Say |
 |---|---|---|
 | 1 | What breaks first? | "In my Loom I said missing information breaks first. I built it to find out." |
-| 2 | Missing information · 0/12 | "Public damage photos almost never show a measurable water line. Put a tape measure in frame and it reads within half an inch." |
-| 3 | Staged water loss | "So I staged one. Tape at heights I measured, so I know the right answer for every room." |
-| 4 | Three callers | "Same photos, three callers. Each one hides something the agent should catch." |
-| 5 | Models look, code does the math | "No call sees all 40 photos. Models only extract, and every fact needs a quote. Code computes every quantity, writes to Xact and reads it back. Gaps go to a person." |
-| 6 | Live run | Switch to the terminal and run the command on the slide. Narrate as it prints: facts → photos → walls per room → write → **read back, repair**. Then open the report: "It caught both lies, 'over a foot' versus 6 inches and an office with no photos. Here's the repair. About 8 cents." |
-| 7 | Photos sorted into the right room | "Every version ran 9 times against the truth. Better models got this to 91%, but only 35% on the caller who lies. Tag photos by room at capture and it's 100%." |
-| 8 | 27/27 · 27/27 · 9/9 · $0.08 | "With that one change, every flood cut was right in every run." |
-| 9 | Wet walls counted | "One thing is still open: the L-shaped den gets over-counted. That's why the next step is capture, not a bigger model." |
-| 10 | Own the capture | Walk left to right: "room tag, one step per wall, tape at the line, a LiDAR scan for lengths, and whatever's left becomes the tech's checklist." |
+| 2 | 0/12 public photos | "I started with 12 public water-damage photos. Not one had a water line the model could measure, and it said so instead of making up a number. The information just isn't in the photos." |
+| 3 | Staged water loss | "So I staged my own. Bedroom, den, living room, tape at three heights I measured, 23 photos with duplicates and different angles. Now I know the right answer for every room." |
+| 4 | Three callers | "Then three calls about the same basement: one prepared, one vague, one exaggerating. Each should trigger specific flags, and the guided runs caught every one." |
+| 5 | Pipeline | Walk the boxes left to right: "Read the call and pull out every fact with a quote. Describe each photo with a cheap model, one photo per call. Sort photos into rooms. Count the wet walls in each room by looking at that room's photos together. Then code, not a model, computes the estimate, writes it to Xact and reads it back to catch silent failures." |
+| 6 | Live run | Switch to the terminal and run the command. Its steps are numbered 1–6, matching the slide. Point at: step 3 *skipped*, the `?` lines (things sent to a human: the office has no photos, "over a foot" vs ~5 in), and step 6 round 1 catching corrupted or missing lines and round 2 fixing them. Cost ~8¢. |
+| 7 | Bar chart | "I iterated five times, nine runs each, scored against the truth. v1 and v2 hand every photo description to one model to group, and the stronger model does much better. v3 split it per room, which fixed wall counting but made room sorting worse. v4 gave the sorter what the caller said about each room. That helps when the caller is honest and hurts when they're not. v5 is the only change that isn't a model change: the photos arrive tagged with their room. 100%, even with the lying caller." |
+| 8 | 27/27 · 27/27 · 9/9 · $0.08 | "With that one change, every flood cut and every flag was right in every run, for 8 cents a claim." |
+| 9 | Wall counts | "What's still open: the L-shaped den gets over-counted. It does get flagged for a human, and the capture flow fixes it with one step per wall." |
+| 10 | Own the capture | Left to right: "room tag, one step per wall, tape at the line, a LiDAR scan for lengths, and whatever's left becomes the tech's checklist." |
 | 11 | What closes each gap | "Capture closes most of it. A tech with a meter closes the rest." |
 | 12 | Close | "It's right wherever it has evidence and explicit about the rest. The code and every run are public. I'd love to talk." |
 
-## Numbers to keep straight
+## Keep straight
 
-- **13** silent write failures repaired is the v5 runs only (slide 8). Across all 45 runs it's **60**.
-- Cost is **$0.08** per claim with guided capture. The best version without it cost $0.12.
+- v5 tags **rooms only**. Walls are still counted by the model, which is why the den over-counts.
+- On the public photos the model **didn't hallucinate**. It returned no measurement. That's the point: the data isn't there.
+- **23** photos (not 27). **13** write repairs in the v5 runs; **60** across all 45 runs.
 
 ## If something goes sideways live
 
-- A model call fails: the client retries. If the run dies, open the warm-up run's report. It's the same pipeline.
+- A model call fails: the client retries. If the run dies, open the warm-up run's report.
 - No write failures this run (they're random): "no faults this time; the eval repaired 60 across 45 runs."
-- Numbers differ a little from the slides: expected. "That's why I ran it 9 times."
+- The den shows 3 or 4 walls: expected, and it's flagged with `? den: confirm wet-wall count`.

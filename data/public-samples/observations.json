@@ -1,0 +1,742 @@
+[
+ {
+  "room": "basement (likely; low sloped-ceiling space below stairs or attic-style room)",
+  "room_evidence": "The file name says 'Basement.' Visually, the room has a sloped ceiling, low headroom, and a doorway opening from a finished hallway with hardwood flooring. The flooded space holds stored boxes and household items. The room type is inferred, not confirmed by fixtures.",
+  "view": "Photo taken from the hallway, looking through a door-width opening down into a sloped-ceiling room. The room floor is covered with standing brown water. A wooden threshold sits at the opening, and dry hardwood flooring is in the foreground.",
+  "surfaces": [
+   {
+    "surface": "floor",
+    "locator": "floor of the sloped-ceiling room, beyond the threshold",
+    "material": "unknown",
+    "damage": [
+     "standing water"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.9
+   },
+   {
+    "surface": "other",
+    "locator": "wooden threshold strip at the base of the doorway between the hallway and the flooded room",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.6
+   },
+   {
+    "surface": "floor",
+    "locator": "hardwood flooring in the foreground, outside the flooded room",
+    "material": "hardwood",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.7
+   },
+   {
+    "surface": "wall",
+    "locator": "wall on the left side of the doorway opening, running down into the flooded room",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "ceiling",
+    "locator": "sloped ceiling above the flooded room and the doorway opening",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   }
+  ],
+  "equipment_visible": [
+   "flexible silver insulated duct lying in the standing water (purpose unclear, possibly drying or ventilation ducting)",
+   "white cylindrical object at lower right edge (unidentified)"
+  ],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-01.jpg",
+  "source_file": "Basement_Flooded_in_Uncle_s_Home.jpg"
+ },
+ {
+  "room": "unknown",
+  "room_evidence": "No fixtures, furniture, or other room features are visible. The surface is overhead, which suggests a ceiling, but the close-up framing gives no room context.",
+  "view": "Close-up, angled view of a white painted ceiling surface with a large area of peeling paint and drywall face paper. Brown staining is scattered across the damaged area, with the intact paint surrounding it.",
+  "surfaces": [
+   {
+    "surface": "ceiling",
+    "locator": "entire photo field; overhead painted surface with the damaged patch in the center",
+    "material": "drywall",
+    "damage": [
+     "delamination",
+     "staining",
+     "peeling paint"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.75
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-02.jpg",
+  "source_file": "Ceiling_sheetrock_damaged_by_water_so_paint_was_peeling.jpg"
+ },
+ {
+  "room": "unknown",
+  "room_evidence": "Photo shows a painted ceiling meeting a striped wallcovering at the lower right edge; no fixtures, furniture, or other room features are identifiable to confirm the room type.",
+  "view": "Upward-angled close-up of a ceiling plane, with the ceiling-to-wall junction running diagonally across the lower right of the frame and a crack and cracked joint compound visible near the center and right side.",
+  "surfaces": [
+   {
+    "surface": "ceiling",
+    "locator": "main painted plane filling most of the frame, meeting the striped wallcovering along the lower right edge",
+    "material": "drywall",
+    "damage": [
+     "staining",
+     "swelling",
+     "delamination"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.6
+   },
+   {
+    "surface": "wall",
+    "locator": "striped wallcovering along the lower right edge, below the ceiling junction",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-03.jpg",
+  "source_file": "Drywall_mould_and_water_damage_florida_hotel_01.png"
+ },
+ {
+  "room": "bathroom",
+  "room_evidence": "Exposed plumbing drain and supply pipes at floor level, a white pipe stub and PVC drain fittings, a wall-mounted grab bar or towel bar at upper right, and a standing fan. The bare wall framing and fixture layout suggest a bathroom or utility space.",
+  "view": "Photo taken from behind and to the side of a person standing in the room, looking at a wall that has been stripped of drywall down to the wood sheathing/plywood. The person is using an orange oscillating or reciprocating cutting tool on the wall near the lower edge of the remaining drywall. A black extension cord and a flexible black hose run across the floor.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "wall behind the person with the electrical outlet and grab bar, exposed plywood/OSB sheathing below a cut drywall line",
+    "material": "drywall",
+    "damage": [
+     "water line",
+     "staining",
+     "delamination"
+    ],
+    "water_line_in": null,
+    "water_line_reference": "No measuring tape or reference object of known height is visible at the cut line. An outlet box sits above the cut line, roughly 12-16in AFF typically, but its height is not visible at the damage line, so a height cannot be anchored.",
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "wall at right with exposed plywood panels running floor to a horizontal cut line, near the corner",
+    "material": "unknown",
+    "damage": [
+     "staining",
+     "water line"
+    ],
+    "water_line_in": null,
+    "water_line_reference": "No reliable scale reference for the cut height. Dark staining is visible on the plywood base at the floor junction.",
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "floor",
+    "locator": "concrete floor at the base of the walls, where drain pipes and the flexible hose sit",
+    "material": "unknown",
+    "damage": [
+     "standing water"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   }
+  ],
+  "equipment_visible": [
+   "fan (floor-standing box fan, left)",
+   "flexible drain or extraction hose",
+   "extension cord",
+   "oscillating or reciprocating cutting tool"
+  ],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-04.jpg",
+  "source_file": "FEMA___30611___Woman_cutting_damaged_Sheetrock.jpg"
+ },
+ {
+  "room": "living room (uncertain)",
+  "room_evidence": "Large window on the left wall, ceiling fan fixture, and open framing with no cabinets, counters, or plumbing. The layout reads as a habitable room rather than a kitchen or bath, but no furniture or fixtures confirm the specific use.",
+  "view": "Interior view from a corner, looking across the room toward the window wall on the left and a second exterior wall on the right. The walls are stripped to studs and the floor is covered in debris. A white bucket and a leaning window sash are in the foreground.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "wall with large window, left side of image",
+    "material": "unknown",
+    "damage": [
+     "staining",
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "wall",
+    "locator": "right-side wall running from the back corner toward the camera, with exposed studs and horizontal blocking",
+    "material": "unknown",
+    "damage": [
+     "staining",
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.35
+   },
+   {
+    "surface": "ceiling",
+    "locator": "upper section of the room, above the ceiling fan and along the top edge of the walls",
+    "material": "drywall",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   },
+   {
+    "surface": "floor",
+    "locator": "floor across the foreground, below the walls",
+    "material": "unknown",
+    "damage": [
+     "staining",
+     "standing water",
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-05.jpg",
+  "source_file": "FEMA___41326___Damaged_home_interior_in_Kentucky.jpg"
+ },
+ {
+  "room": "basement",
+  "room_evidence": "Exposed joists and subfloor overhead, bare concrete floor, exposed wood wall studs, pink fiberglass insulation on the floor, and stored boxes and trash bags in the background, consistent with an unfinished basement.",
+  "view": "Wide-angle shot from the room's interior, looking at a worker in a dark shirt and jeans who is pulling drywall off a wall. Exposed studs and a stud bay are to the right, and a white painted wall with dark staining is on the far right.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "wall directly in front of the worker, left of the exposed stud bays, still partially covered with drywall and being demolished",
+    "material": "drywall",
+    "damage": [
+     "staining",
+     "mold-like growth"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.6
+   },
+   {
+    "surface": "wall",
+    "locator": "center-right wall section with exposed wood studs and a dark-faced backing panel between them",
+    "material": "unknown",
+    "damage": [
+     "staining",
+     "mold-like growth"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "far-right white wall at the edge of the frame, with a torn patch of drywall near mid-height",
+    "material": "drywall",
+    "damage": [
+     "staining",
+     "mold-like growth"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "floor",
+    "locator": "bare floor in the foreground and midground, covered with insulation and drywall debris",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.6
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-06.jpg",
+  "source_file": "FEMA___45061___Wall_demolition_at_Rocky_Boy_Indian_Reservation_in_Montana.jpg"
+ },
+ {
+  "room": "basement",
+  "room_evidence": "Stone foundation walls, exposed joists and wood shelving visible through the opening, and a flooded floor below a stair or bulkhead entrance, which together indicate a basement interior viewed from above.",
+  "view": "Elevated view looking down a stairwell or bulkhead opening into a flooded basement. Brown standing water covers the floor, with the doorway frame and stone walls framing the entry.",
+  "surfaces": [
+   {
+    "surface": "floor",
+    "locator": "basement floor visible at bottom center, below the doorway",
+    "material": "unknown",
+    "damage": [
+     "standing water"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.8
+   },
+   {
+    "surface": "wall",
+    "locator": "stone foundation wall on the left side of the entry, below the green painted frame",
+    "material": "unknown",
+    "damage": [
+     "staining"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "wall",
+    "locator": "stone foundation wall on the right side of the entry, below the green painted frame",
+    "material": "unknown",
+    "damage": [
+     "staining"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "wall",
+    "locator": "green painted entry surfaces framing the opening, upper left and upper right",
+    "material": "unknown",
+    "damage": [
+     "delamination"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "other",
+    "locator": "wooden shelving unit visible inside the basement, center of the opening",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "partial",
+  "photo": "public-07.jpg",
+  "source_file": "Flash_flood_Canandaigua_NY_July_23__2017_04_flooded_basement.jpg"
+ },
+ {
+  "room": "basement",
+  "room_evidence": "Exposed overhead joists and pipes, concrete-like walls and columns, and a low ceiling suggest an unfinished basement or utility space. The filename also references a basement.",
+  "view": "Interior view from a corner or doorway looking into the room. The back wall is in the center, the right wall recedes toward the viewer, and a large vertical pipe stack sits on the left-center. A dark, glossy floor fills the foreground.",
+  "surfaces": [
+   {
+    "surface": "floor",
+    "locator": "full foreground floor area in front of the back wall and pipe stack",
+    "material": "unknown",
+    "damage": [
+     "standing water"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "wall",
+    "locator": "back wall directly across from the camera, behind the pipe stack",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   },
+   {
+    "surface": "wall",
+    "locator": "right side wall receding from the camera, with a cable run on the floor at its base",
+    "material": "unknown",
+    "damage": [
+     "staining"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   },
+   {
+    "surface": "other",
+    "locator": "vertical concrete-like column or wall edge at the far left edge of the frame",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.2
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "dark",
+  "photo": "public-08.jpg",
+  "source_file": "Flood_Basement_ACG__5075030165_.jpg"
+ },
+ {
+  "room": "hallway",
+  "room_evidence": "Long interior passage with multiple panel doors in arched and square openings along both sides, a transom window above a door on the right, and a deep corridor receding toward more doorways.",
+  "view": "Eye-level view from the doorway of a room looking down a long hallway. The left wall is in the foreground, the right wall with an open door is nearer the camera, and the floor runs toward the far end.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "left wall in foreground, opening onto hallway, with exposed wood lath strips from floor to roughly the middle of the frame",
+    "material": "plaster",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "right wall beside the open door, painted salmon/terracotta above a stripped lower section with exposed lath",
+    "material": "plaster",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "floor",
+    "locator": "hallway floor running from the foreground toward the far doorways, wood planks with scattered debris and flaking material",
+    "material": "hardwood",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "floor",
+    "locator": "foreground floor in front of the open door, gray cracked surface with debris",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   },
+   {
+    "surface": "trim",
+    "locator": "door casings and frame around the arched opening and the open door on the right",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-09.jpg",
+  "source_file": "New_Orleans_803_Olga_House_Gutted.jpg"
+ },
+ {
+  "room": "unknown (likely a bedroom or parlor)",
+  "room_evidence": "A tall arched-top window, a cream baseboard, and a pink/salmon upper wall are visible in the far room. No fixtures or furniture confirm the room's use.",
+  "view": "Interior shot taken from inside a doorway in the foreground, looking across a gutted room toward a bright arched window on the far wall. A dark door jamb runs down the foreground.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "upper far wall above the exposed lath, left of and below the arched window",
+    "material": "plaster",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "lower far wall below the window, plaster removed to wood lath",
+    "material": "plaster",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "left side wall beside the foreground door jamb, exposed wood lath",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "baseboard",
+    "locator": "cream-painted baseboard along the bottom of the far wall, below the lath section",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "floor",
+    "locator": "floor of the far room, between the foreground door jamb and the far wall",
+    "material": "tile",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "dark",
+  "photo": "public-10.jpg",
+  "source_file": "New_Orleans_803_Olga_House_Interior.jpg"
+ },
+ {
+  "room": "basement laundry area",
+  "room_evidence": "Front-loading washing machine against the wall at left, a yellow wastebasket beside it, cardboard boxes stacked on top of the left wall area, and a green bucket and mop in the doorway/room beyond. Floor appears to be a dark, sealed concrete or similar hard surface, consistent with a basement.",
+  "view": "Photo taken from a doorway looking down into the room, showing a large standing water pool across the floor extending toward the camera. A second doorway with a green bucket is visible in the background, and a mop leans against the right-hand wall.",
+  "surfaces": [
+   {
+    "surface": "floor",
+    "locator": "entire floor area in the foreground and middle ground, between the left door frame and the right wall",
+    "material": "unknown",
+    "damage": [
+     "standing water"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.8
+   },
+   {
+    "surface": "wall",
+    "locator": "wall behind the washing machine and cardboard boxes at upper left",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "wall",
+    "locator": "right-hand wall beside the mop, to the right of the background doorway",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   },
+   {
+    "surface": "baseboard",
+    "locator": "base of the left wall near the door frame and the washing machine",
+    "material": "unknown",
+    "damage": [
+     "none visible"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.3
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-11.jpg",
+  "source_file": "Puddle_in_a_flooding_basement.jpg"
+ },
+ {
+  "room": "not applicable (exterior)",
+  "room_evidence": "Photo shows the exterior of a brick building with arched windows, iron bars, weeds, and debris on the ground. No interior finishes, ceilings, or floor coverings are visible.",
+  "view": "Ground-level exterior view looking at a brick facade from an outdoor yard or lot, with rubble and vegetation in the foreground.",
+  "surfaces": [
+   {
+    "surface": "wall",
+    "locator": "main brick facade, exterior wall with arched windows and a blocked-in lighter brick panel at center",
+    "material": "masonry (brick)",
+    "damage": [
+     "staining",
+     "mold-like growth"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.5
+   },
+   {
+    "surface": "wall",
+    "locator": "lower brick section at base of facade, with broken and missing bricks and fallen rubble",
+    "material": "masonry (brick)",
+    "damage": [
+     "staining",
+     "swelling"
+    ],
+    "water_line_in": null,
+    "water_line_reference": null,
+    "visible_width_ft": null,
+    "width_reference": null,
+    "confidence": 0.4
+   }
+  ],
+  "equipment_visible": [],
+  "measurement_aids_visible": [],
+  "photo_quality": "good",
+  "photo": "public-12.jpg",
+  "source_file": "Water_Damaged_Wall_of_Delmar_School__8467135868_.jpg"
+ }
+]

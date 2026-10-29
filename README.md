@@ -74,6 +74,7 @@ Flags: `--transcript 01-prepared|02-vague|03-overclaim`, `--guided` (photos arri
 - `data/claim-001/photos/`: 23 photos of a staged basement loss. GPS and all other metadata stripped except capture time.
 - `data/claim-001/transcripts/`: three callers describing the same loss: prepared (with numbers), vague (no numbers, unknown source), and overclaiming (a room that wasn't wet, exaggerated depth).
 - `data/claim-001/truth.json`: measured water lines, wet-wall counts, room areas, and the flags each transcript should trigger.
+- `data/public-samples/`: the 12 public Wikimedia Commons photos behind "0 of 12", what the photo model returned for each, and credits.
 
 ## Honest limits
 

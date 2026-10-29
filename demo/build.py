@@ -14,12 +14,13 @@ PHOTOS = "../data/claim-001/photos"
 e = lambda s: html.escape(str(s))
 
 VERSIONS = [  # (results file, short label, what changed)
-    ("eval-1-flat-haiku.json", "v1", "one call · Haiku"),
-    ("eval-2-flat-sonnet.json", "v2", "one call · Sonnet"),
-    ("eval-3-hierarchical.json", "v3", "one call per room"),
+    ("eval-1-flat-haiku.json", "v1", "Haiku groups all photos"),
+    ("eval-2-flat-sonnet.json", "v2", "Sonnet groups all photos"),
+    ("eval-3-hierarchical.json", "v3", "sort rooms, then walls per room"),
     ("eval-4-hierarchical-caller-context.json", "v4", "+ caller's room descriptions"),
-    ("eval-5-guided-capture.json", "v5", "guided capture"),
+    ("eval-5-guided-capture.json", "v5", "photos tagged by room"),
 ]
+PUBLIC = ROOT / "data/public-samples"
 HERO_PHOTO = {"bedroom": "IMG_7693", "den": "IMG_7701", "living room": "IMG_7697"}
 CALLERS = [  # (transcript, label, line quoted on the slide; checked against the transcript below)
     ("01-prepared", "Prepared", "Maybe half an inch across the floor?"),
@@ -50,6 +51,9 @@ def summarize(rows: list[dict], truth: dict) -> dict:
         "cut": (sum(cut), len(cut)),
         "walls": {room: [r["rooms"][room]["wet_walls"] for r in ok] for room in truth["rooms"]},
         "flags": (sum(r["flags_caught"] for r in ok), sum(r["flags_expected"] for r in ok)),
+        "flags_by_t": {t: (sum(r["flags_caught"] for r in ok if r["transcript"] == t),
+                           sum(r["flags_expected"] for r in ok if r["transcript"] == t))
+                       for t in {r["transcript"] for r in ok}},
         "xact": (sum(r["xact_verified"] for r in ok), len(ok)),
         "repairs": sum(r["xact_repairs"] for r in ok),
         "usd": median(r["usd"] for r in ok),
@@ -75,14 +79,25 @@ def slide_rooms(truth: dict) -> str:
     return cols
 
 
-def slide_callers(truth: dict) -> str:
+def slide_public() -> tuple[str, str]:
+    obs = json.loads((PUBLIC / "observations.json").read_text())
+    measured = sum(any(x.get("water_line_in") is not None for x in o["surfaces"]) for o in obs)
+    cells = "".join(f'<div class=pub><img src="../data/public-samples/photos/{o["photo"]}" alt="">'
+                    f'<span>{"water line: none" if not any(x.get("water_line_in") is not None for x in o["surfaces"]) else "water line found"}</span></div>'
+                    for o in obs)
+    return cells, f"{measured}/{len(obs)}"
+
+
+def slide_callers(truth: dict, final: dict) -> str:
     cards = ""
     for name, label, quote in CALLERS:
         text = (CLAIM / "transcripts" / f"{name}.txt").read_text()
         assert quote in text, f"quote not in {name}: {quote}"
         chips = "".join(f"<li>{e(flag_text(f))}</li>" for f in truth["transcripts"][name]["expected_flags"])
+        caught, expected = final["flags_by_t"][name]
         cards += (f'<div class="caller reveal"><div class=mono>{e(name)}</div><h3>{e(label)}</h3>'
-                  f'<blockquote>“{e(quote)}”</blockquote><div class="mono dim">should flag</div><ul class=chips>{chips}</ul></div>')
+                  f'<blockquote>“{e(quote)}”</blockquote><div class="mono dim">should flag</div><ul class=chips>{chips}</ul>'
+                  f'<div class=caught><b>{caught}/{expected}</b> caught across {final["runs"] // 3} guided runs</div></div>')
     return cards
 
 
@@ -124,9 +139,10 @@ def main():
     final, best_unguided = versions[-1][2], versions[-2][2]
     n_photos = sum(len(t["photos"]) for t in truth["rooms"].values())
 
+    public_cells, public_measured = slide_public()
     page = PAGE
     for k, v in {
-        "ROOMS": slide_rooms(truth), "CALLERS": slide_callers(truth), "CHART": slide_chart(versions),
+        "ROOMS": slide_rooms(truth), "CALLERS": slide_callers(truth, final), "PUBLIC": public_cells, "PUBLIC_MEASURED": public_measured, "CHART": slide_chart(versions),
         "WALLS": slide_walls(final, truth), "N_PHOTOS": str(n_photos), "RUNS": str(final["runs"]),
         "CUT": "{}/{}".format(*final["cut"]), "FLAGS": "{}/{}".format(*final["flags"]),
         "XACT": "{}/{}".format(*final["xact"]), "REPAIRS": str(final["repairs"]), "USD": f"${final['usd']:.2f}",
@@ -196,6 +212,12 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
   font-family:var(--mono);font-size:28px}
 .photo .tag b{color:var(--accent);font-weight:600}
 
+.pubgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:16px;min-height:0}
+.pub{position:relative;border-radius:12px;overflow:hidden;background:var(--panel);min-height:0}
+.pub img{width:100%;height:100%;object-fit:cover;max-height:none;display:block}
+.pub span{position:absolute;left:10px;bottom:10px;background:rgba(10,11,13,.85);padding:6px 10px;border-radius:6px;font-family:var(--mono);font-size:18px;color:#e66767}
+.split.pubsplit{grid-template-columns:560px 1fr}
+
 /* 3 rooms */
 .rooms{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px;min-height:0}
 .room{display:flex;flex-direction:column;gap:22px;min-height:0}
@@ -208,21 +230,24 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
 .callers{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:56px}
 .caller{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:44px;display:flex;flex-direction:column;gap:18px}
 .caller blockquote{font-size:40px;line-height:1.2;font-weight:600;margin:10px 0 auto;padding-bottom:28px}
+.caller .chips{min-height:250px}
 .chips{list-style:none;display:flex;flex-direction:column;gap:12px}
+.caught{margin-top:18px;font-family:var(--mono);font-size:22px;color:var(--dim)}
+.caught b{color:#4ade80;font-size:30px;margin-right:6px}
 .chips li{font-family:var(--mono);font-size:22px;line-height:1.3;border-left:5px solid var(--accent);padding:10px 16px;background:#24282e;border-radius:0 8px 8px 0}
 
 /* 5 pipeline */
 .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-top:100px}
-.step{border:3px solid var(--model);border-radius:18px;padding:36px 30px;min-height:440px;display:flex;flex-direction:column;gap:14px;position:relative}
+.step{border:3px solid var(--model);border-radius:18px;padding:32px 26px;min-height:400px;display:flex;flex-direction:column;gap:14px;position:relative}
 .step.code{border-color:var(--code);background:rgba(242,194,48,.07)}
 .step .n{font-family:var(--mono);font-size:26px;color:var(--dim)}
-.step b{font-size:44px;line-height:1.1;letter-spacing:-.01em}
-.step .who{margin-top:auto;font-family:var(--mono);font-size:28px;font-weight:600;color:var(--model)}
+.step b{font-size:36px;line-height:1.1;letter-spacing:-.01em}
+.step .who{margin-top:auto;font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.35;color:var(--model)}
 .step.code .who{color:var(--code)}
 .step .calls{font-family:var(--mono);font-size:24px;line-height:1.35;color:var(--dim)}
 .step.skip{border-style:dashed}
 .step:not(:last-child)::after{content:"→";position:absolute;right:-21px;top:50%;transform:translate(50%,-50%);font-size:30px;color:var(--dim)}
-.legend{display:flex;gap:40px;margin-top:48px;font-family:var(--mono);font-size:24px;color:var(--dim)}
+.legend{display:flex;gap:40px;margin:40px 0 0;font-family:var(--mono);font-size:24px;color:var(--dim)}
 .legend i{display:inline-block;width:22px;height:22px;border-radius:5px;border:3px solid var(--model);margin-right:12px;vertical-align:-4px}
 .legend i.c{border-color:var(--code);background:rgba(242,194,48,.15)}
 .legend i.s{border-style:dashed}
@@ -322,12 +347,13 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 </section>
 
 <section class=slide>
-<div class="mono reveal">01 · What breaks first</div>
+<div class="mono reveal">01 · Public water-damage photos</div>
 <h2 class=reveal>Missing information.</h2>
-<div class=split>
-<div class="big reveal"><b>0/12</b><span>public water-damage photos with a measurable water line</span></div>
-<div class="photo reveal"><img src="%%PHOTOS%%/IMG_7711.jpg" alt=""><div class=tag>tape measure in frame → <b>±0.5 in</b></div></div>
+<div class="split pubsplit">
+<div class="big reveal"><b>%%PUBLIC_MEASURED%%</b><span>photos with a water line the model could measure. It returned no number rather than guess.</span></div>
+<div class="pubgrid reveal">%%PUBLIC%%</div>
 </div>
+<div class="foot reveal" style="margin-top:28px;font-size:20px">Wikimedia Commons · credits in data/public-samples/CREDITS.md</div>
 </section>
 
 <section class=slide>
@@ -346,12 +372,12 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <div class="mono reveal">04 · Pipeline · no call sees all 40 photos</div>
 <h2 class=reveal>Models look. Code does the math.</h2>
 <div class="flow reveal">
-<div class=step><span class=n>0</span><b>Call → facts</b><span class=calls>1 call · every fact quoted</span><span class=who>Sonnet</span></div>
-<div class=step><span class=n>1</span><b>Each photo</b><span class=calls>1 call per photo</span><span class=who>Haiku</span></div>
-<div class="step skip"><span class=n>2a</span><b>Photo → room</b><span class=calls>skipped when photos arrive tagged</span><span class=who>Sonnet</span></div>
-<div class=step><span class=n>2b</span><b>Room → walls</b><span class=calls>1 call per room</span><span class=who>Sonnet</span></div>
-<div class="step code"><span class=n>3</span><b>Quantities</b><span class=calls>flood cut, SF, LF, days</span><span class=who>code</span></div>
-<div class="step code"><span class=n>4</span><b>Write → read back</b><span class=calls>diff, repair, retry</span><span class=who>code</span></div>
+<div class=step><span class=n>1</span><b>Read the call</b><span class=calls>facts, each with a quote</span><span class=who>Sonnet · 1 call</span></div>
+<div class=step><span class=n>2</span><b>Describe each photo</b><span class=calls>walls, damage, water line</span><span class=who>Haiku · 1 per photo</span></div>
+<div class="step skip"><span class=n>3</span><b>Sort photos into rooms</b><span class=calls>skipped when photos arrive tagged</span><span class=who>Sonnet · 1 call</span></div>
+<div class=step><span class=n>4</span><b>Count wet walls per room</b><span class=calls>sees that room's photos together</span><span class=who>Sonnet · 1 per room</span></div>
+<div class="step code"><span class=n>5</span><b>Compute the estimate</b><span class=calls>flood cut, SF, equipment days</span><span class=who>code</span></div>
+<div class="step code"><span class=n>6</span><b>Write to Xact, read it back</b><span class=calls>diff, repair, retry</span><span class=who>code</span></div>
 </div>
 <div class="legend reveal"><span><i></i>model</span><span><i class=c></i>code</span><span><i class=s></i>guided capture removes it</span></div>
 <div class="foot reveal">gaps and contradictions → human review queue</div>
@@ -395,7 +421,7 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 
 <section class=slide>
 <div class="mono reveal">08 · v5 guided capture · still open</div>
-<h2 class=reveal>Wet walls counted, per run</h2>
+<h2 class=reveal>Counting walls: the L-shaped den is still open.</h2>
 <div class=walls>%%WALLS%%</div>
 <div class="wkey reveal"><span><i style="background:var(--ok)"></i>correct</span><span><i style="border:4px solid var(--off)"></i>wrong</span><span><i style="background:var(--accent);border-radius:3px;width:8px"></i>true count</span></div>
 </section>

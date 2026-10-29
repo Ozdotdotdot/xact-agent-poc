@@ -56,6 +56,12 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
   font-family:var(--mono);font-size:28px}
 .photo .tag b{color:var(--accent);font-weight:600}
 
+.pubgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:16px;min-height:0}
+.pub{position:relative;border-radius:12px;overflow:hidden;background:var(--panel);min-height:0}
+.pub img{width:100%;height:100%;object-fit:cover;max-height:none;display:block}
+.pub span{position:absolute;left:10px;bottom:10px;background:rgba(10,11,13,.85);padding:6px 10px;border-radius:6px;font-family:var(--mono);font-size:18px;color:#e66767}
+.split.pubsplit{grid-template-columns:560px 1fr}
+
 /* 3 rooms */
 .rooms{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px;min-height:0}
 .room{display:flex;flex-direction:column;gap:22px;min-height:0}
@@ -68,21 +74,24 @@ h3{font-size:44px;font-weight:800;letter-spacing:-.02em}
 .callers{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:56px}
 .caller{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:44px;display:flex;flex-direction:column;gap:18px}
 .caller blockquote{font-size:40px;line-height:1.2;font-weight:600;margin:10px 0 auto;padding-bottom:28px}
+.caller .chips{min-height:250px}
 .chips{list-style:none;display:flex;flex-direction:column;gap:12px}
+.caught{margin-top:18px;font-family:var(--mono);font-size:22px;color:var(--dim)}
+.caught b{color:#4ade80;font-size:30px;margin-right:6px}
 .chips li{font-family:var(--mono);font-size:22px;line-height:1.3;border-left:5px solid var(--accent);padding:10px 16px;background:#24282e;border-radius:0 8px 8px 0}
 
 /* 5 pipeline */
 .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;margin-top:100px}
-.step{border:3px solid var(--model);border-radius:18px;padding:36px 30px;min-height:440px;display:flex;flex-direction:column;gap:14px;position:relative}
+.step{border:3px solid var(--model);border-radius:18px;padding:32px 26px;min-height:400px;display:flex;flex-direction:column;gap:14px;position:relative}
 .step.code{border-color:var(--code);background:rgba(242,194,48,.07)}
 .step .n{font-family:var(--mono);font-size:26px;color:var(--dim)}
-.step b{font-size:44px;line-height:1.1;letter-spacing:-.01em}
-.step .who{margin-top:auto;font-family:var(--mono);font-size:28px;font-weight:600;color:var(--model)}
+.step b{font-size:36px;line-height:1.1;letter-spacing:-.01em}
+.step .who{margin-top:auto;font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.35;color:var(--model)}
 .step.code .who{color:var(--code)}
 .step .calls{font-family:var(--mono);font-size:24px;line-height:1.35;color:var(--dim)}
 .step.skip{border-style:dashed}
 .step:not(:last-child)::after{content:"→";position:absolute;right:-21px;top:50%;transform:translate(50%,-50%);font-size:30px;color:var(--dim)}
-.legend{display:flex;gap:40px;margin-top:48px;font-family:var(--mono);font-size:24px;color:var(--dim)}
+.legend{display:flex;gap:40px;margin:40px 0 0;font-family:var(--mono);font-size:24px;color:var(--dim)}
 .legend i{display:inline-block;width:22px;height:22px;border-radius:5px;border:3px solid var(--model);margin-right:12px;vertical-align:-4px}
 .legend i.c{border-color:var(--code);background:rgba(242,194,48,.15)}
 .legend i.s{border-style:dashed}
@@ -182,12 +191,13 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 </section>
 
 <section class=slide>
-<div class="mono reveal">01 · What breaks first</div>
+<div class="mono reveal">01 · Public water-damage photos</div>
 <h2 class=reveal>Missing information.</h2>
-<div class=split>
-<div class="big reveal"><b>0/12</b><span>public water-damage photos with a measurable water line</span></div>
-<div class="photo reveal"><img src="../data/claim-001/photos/IMG_7711.jpg" alt=""><div class=tag>tape measure in frame → <b>±0.5 in</b></div></div>
+<div class="split pubsplit">
+<div class="big reveal"><b>0/12</b><span>photos with a water line the model could measure. It returned no number rather than guess.</span></div>
+<div class="pubgrid reveal"><div class=pub><img src="../data/public-samples/photos/public-01.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-02.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-03.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-04.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-05.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-06.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-07.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-08.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-09.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-10.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-11.jpg" alt=""><span>water line: none</span></div><div class=pub><img src="../data/public-samples/photos/public-12.jpg" alt=""><span>water line: none</span></div></div>
 </div>
+<div class="foot reveal" style="margin-top:28px;font-size:20px">Wikimedia Commons · credits in data/public-samples/CREDITS.md</div>
 </section>
 
 <section class=slide>
@@ -199,19 +209,19 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <section class=slide>
 <div class="mono reveal">03 · Same photos, three callers</div>
 <h2 class=reveal>Each call hides something.</h2>
-<div class=callers><div class="caller reveal"><div class=mono>01-prepared</div><h3>Prepared</h3><blockquote>“Maybe half an inch across the floor?”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>closet mentioned, never photographed</li><li>only one wall length given</li><li>says &#x27;half an inch&#x27;, photos show 6-16in</li></ul></div><div class="caller reveal"><div class=mono>02-vague</div><h3>Vague</h3><blockquote>“I don&#x27;t know where it came from.”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>water category</li><li>bedroom: no dimensions</li><li>den: no dimensions</li><li>living room: no dimensions</li></ul></div><div class="caller reveal"><div class=mono>03-overclaim</div><h3>Overclaims</h3><blockquote>“In the bedroom it was over a foot. Easily.”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>claimed wet, no evidence</li><li>says &#x27;over a foot&#x27; in the bedroom, photos show ~6in</li></ul></div></div>
+<div class=callers><div class="caller reveal"><div class=mono>01-prepared</div><h3>Prepared</h3><blockquote>“Maybe half an inch across the floor?”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>closet mentioned, never photographed</li><li>only one wall length given</li><li>says &#x27;half an inch&#x27;, photos show 6-16in</li></ul><div class=caught><b>9/9</b> caught across 3 guided runs</div></div><div class="caller reveal"><div class=mono>02-vague</div><h3>Vague</h3><blockquote>“I don&#x27;t know where it came from.”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>water category</li><li>bedroom: no dimensions</li><li>den: no dimensions</li><li>living room: no dimensions</li></ul><div class=caught><b>12/12</b> caught across 3 guided runs</div></div><div class="caller reveal"><div class=mono>03-overclaim</div><h3>Overclaims</h3><blockquote>“In the bedroom it was over a foot. Easily.”</blockquote><div class="mono dim">should flag</div><ul class=chips><li>claimed wet, no evidence</li><li>says &#x27;over a foot&#x27; in the bedroom, photos show ~6in</li></ul><div class=caught><b>6/6</b> caught across 3 guided runs</div></div></div>
 </section>
 
 <section class=slide>
 <div class="mono reveal">04 · Pipeline · no call sees all 40 photos</div>
 <h2 class=reveal>Models look. Code does the math.</h2>
 <div class="flow reveal">
-<div class=step><span class=n>0</span><b>Call → facts</b><span class=calls>1 call · every fact quoted</span><span class=who>Sonnet</span></div>
-<div class=step><span class=n>1</span><b>Each photo</b><span class=calls>1 call per photo</span><span class=who>Haiku</span></div>
-<div class="step skip"><span class=n>2a</span><b>Photo → room</b><span class=calls>skipped when photos arrive tagged</span><span class=who>Sonnet</span></div>
-<div class=step><span class=n>2b</span><b>Room → walls</b><span class=calls>1 call per room</span><span class=who>Sonnet</span></div>
-<div class="step code"><span class=n>3</span><b>Quantities</b><span class=calls>flood cut, SF, LF, days</span><span class=who>code</span></div>
-<div class="step code"><span class=n>4</span><b>Write → read back</b><span class=calls>diff, repair, retry</span><span class=who>code</span></div>
+<div class=step><span class=n>1</span><b>Read the call</b><span class=calls>facts, each with a quote</span><span class=who>Sonnet · 1 call</span></div>
+<div class=step><span class=n>2</span><b>Describe each photo</b><span class=calls>walls, damage, water line</span><span class=who>Haiku · 1 per photo</span></div>
+<div class="step skip"><span class=n>3</span><b>Sort photos into rooms</b><span class=calls>skipped when photos arrive tagged</span><span class=who>Sonnet · 1 call</span></div>
+<div class=step><span class=n>4</span><b>Count wet walls per room</b><span class=calls>sees that room's photos together</span><span class=who>Sonnet · 1 per room</span></div>
+<div class="step code"><span class=n>5</span><b>Compute the estimate</b><span class=calls>flood cut, SF, equipment days</span><span class=who>code</span></div>
+<div class="step code"><span class=n>6</span><b>Write to Xact, read it back</b><span class=calls>diff, repair, retry</span><span class=who>code</span></div>
 </div>
 <div class="legend reveal"><span><i></i>model</span><span><i class=c></i>code</span><span><i class=s></i>guided capture removes it</span></div>
 <div class="foot reveal">gaps and contradictions → human review queue</div>
@@ -238,7 +248,7 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <div class=key><span><i style="background:var(--model)"></i>all callers (median)</span><span><i style="background:var(--liar)"></i>overclaiming caller</span></div>
 <div class=chart style="margin-top:60px">
 <div class=gridline style="top:0"><span>100%</span></div><div class=gridline style="top:50%"><span>50%</span></div>
-<div class="group"><div class=bars><div class="bar all" style="height:39.0%" title="v1 all callers: 39%"><span>39%</span></div><div class="bar liar" style="height:39.0%" title="v1 overclaiming caller: 39%"><span>39%</span></div></div><div class=xlab><b>v1</b><span>one call · Haiku</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:87.0%" title="v2 all callers: 87%"><span>87%</span></div><div class="bar liar" style="height:43.0%" title="v2 overclaiming caller: 43%"><span>43%</span></div></div><div class=xlab><b>v2</b><span>one call · Sonnet</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:70.0%" title="v3 all callers: 70%"><span>70%</span></div><div class="bar liar" style="height:48.0%" title="v3 overclaiming caller: 48%"><span>48%</span></div></div><div class=xlab><b>v3</b><span>one call per room</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:91.3%" title="v4 all callers: 91%"><span>91%</span></div><div class="bar liar" style="height:34.8%" title="v4 overclaiming caller: 35%"><span>35%</span></div></div><div class=xlab><b>v4</b><span>+ caller&#x27;s room descriptions</span></div></div><div class="group hl"><div class=bars><div class="bar all" style="height:100.0%" title="v5 all callers: 100%"><span>100%</span></div><div class="bar liar" style="height:100.0%" title="v5 overclaiming caller: 100%"><span>100%</span></div></div><div class=xlab><b>v5</b><span>guided capture</span></div></div>
+<div class="group"><div class=bars><div class="bar all" style="height:39.0%" title="v1 all callers: 39%"><span>39%</span></div><div class="bar liar" style="height:39.0%" title="v1 overclaiming caller: 39%"><span>39%</span></div></div><div class=xlab><b>v1</b><span>Haiku groups all photos</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:87.0%" title="v2 all callers: 87%"><span>87%</span></div><div class="bar liar" style="height:43.0%" title="v2 overclaiming caller: 43%"><span>43%</span></div></div><div class=xlab><b>v2</b><span>Sonnet groups all photos</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:70.0%" title="v3 all callers: 70%"><span>70%</span></div><div class="bar liar" style="height:48.0%" title="v3 overclaiming caller: 48%"><span>48%</span></div></div><div class=xlab><b>v3</b><span>sort rooms, then walls per room</span></div></div><div class="group"><div class=bars><div class="bar all" style="height:91.3%" title="v4 all callers: 91%"><span>91%</span></div><div class="bar liar" style="height:34.8%" title="v4 overclaiming caller: 35%"><span>35%</span></div></div><div class=xlab><b>v4</b><span>+ caller&#x27;s room descriptions</span></div></div><div class="group hl"><div class=bars><div class="bar all" style="height:100.0%" title="v5 all callers: 100%"><span>100%</span></div><div class="bar liar" style="height:100.0%" title="v5 overclaiming caller: 100%"><span>100%</span></div></div><div class=xlab><b>v5</b><span>photos tagged by room</span></div></div>
 </div></div>
 </section>
 
@@ -255,7 +265,7 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 
 <section class=slide>
 <div class="mono reveal">08 · v5 guided capture · still open</div>
-<h2 class=reveal>Wet walls counted, per run</h2>
+<h2 class=reveal>Counting walls: the L-shaped den is still open.</h2>
 <div class=walls><div class="wrow reveal"><div class=wname><b>Bedroom</b><span>true: 2</span></div><div class=track><div class=truth style="left:40.00%"></div><i class="ok" style="left:calc(40.00% + -32px);top:33px"></i><i class="off" style="left:calc(60.00% + -32px);top:33px"></i><i class="ok" style="left:calc(40.00% + 0px);top:33px"></i><i class="ok" style="left:calc(40.00% + 32px);top:33px"></i><i class="off" style="left:calc(60.00% + 0px);top:33px"></i><i class="ok" style="left:calc(40.00% + -32px);top:65px"></i><i class="ok" style="left:calc(40.00% + 0px);top:65px"></i><i class="ok" style="left:calc(40.00% + 32px);top:65px"></i><i class="ok" style="left:calc(40.00% + -32px);top:97px"></i></div><div class=wscore>7/9</div></div><div class="wrow reveal"><div class=wname><b>Den · L-shaped</b><span>true: 2</span></div><div class=track><div class=truth style="left:40.00%"></div><i class="ok" style="left:calc(40.00% + -32px);top:33px"></i><i class="off" style="left:calc(80.00% + -32px);top:33px"></i><i class="off" style="left:calc(80.00% + 0px);top:33px"></i><i class="off" style="left:calc(60.00% + -32px);top:33px"></i><i class="off" style="left:calc(60.00% + 0px);top:33px"></i><i class="off" style="left:calc(60.00% + 32px);top:33px"></i><i class="off" style="left:calc(60.00% + -32px);top:65px"></i><i class="off" style="left:calc(80.00% + 32px);top:33px"></i><i class="off" style="left:calc(80.00% + -32px);top:65px"></i></div><div class=wscore>1/9</div></div><div class="wrow reveal"><div class=wname><b>Living Room</b><span>true: 1</span></div><div class=track><div class=truth style="left:20.00%"></div><i class="ok" style="left:calc(20.00% + -32px);top:33px"></i><i class="ok" style="left:calc(20.00% + 0px);top:33px"></i><i class="ok" style="left:calc(20.00% + 32px);top:33px"></i><i class="ok" style="left:calc(20.00% + -32px);top:65px"></i><i class="ok" style="left:calc(20.00% + 0px);top:65px"></i><i class="ok" style="left:calc(20.00% + 32px);top:65px"></i><i class="ok" style="left:calc(20.00% + -32px);top:97px"></i><i class="ok" style="left:calc(20.00% + 0px);top:97px"></i><i class="ok" style="left:calc(20.00% + 32px);top:97px"></i></div><div class=wscore>9/9</div></div><div class=wrow><div></div><div class=ticks><span style="left:0.0%">0</span><span style="left:20.0%">1</span><span style="left:40.0%">2</span><span style="left:60.0%">3</span><span style="left:80.0%">4</span><span style="left:100.0%">5</span></div><div></div></div></div>
 <div class="wkey reveal"><span><i style="background:var(--ok)"></i>correct</span><span><i style="border:4px solid var(--off)"></i>wrong</span><span><i style="background:var(--accent);border-radius:3px;width:8px"></i>true count</span></div>
 </section>
