@@ -391,7 +391,7 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <div class="params reveal">
 <div><span>Caller</span>Overclaims</div>
 <div><span>Photos</span>Tagged by room</div>
-<div><span>Mock Xact</span>half of writes silently fail</div>
+<div><span>Mock Xact</span>30% of writes silently fail</div>
 </div>
 </section>
 
