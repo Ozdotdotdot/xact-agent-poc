@@ -41,6 +41,8 @@ async def run_claim(client: Client, claim: Path, transcript: str, models: dict, 
     scope = {"facts": facts, **stage3_scope.build(facts, dd["surfaces"])}
     log(f"    {len(scope['line_items'])} line items, {len(scope['review_queue'])} flagged for a human, "
         f"${scope['estimate_total']:,.2f}")
+    for li in scope["line_items"]:
+        log(f"      {li['room']:<12} {li['code']:<9} {li['qty']:>6g} {li['unit']:<3} ${li['total']:>8,.2f}  {li['desc']}")
     for q in scope["review_queue"]:
         log(f"      ? {q['room']}: {q['needs']}")
 

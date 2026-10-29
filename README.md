@@ -67,7 +67,7 @@ xdg-open out/claim-001/03-overclaim/report.html
 uv run eval.py data/claim-001 --runs 3 --guided --tag mine    # ~$0.75, writes results/eval-mine.json
 ```
 
-Flags: `--transcript 01-prepared|02-vague|03-overclaim`, `--guided` (photos arrive room-tagged), `--xact-fault-rate 0.3`, `--baseline` (all photos in one Opus call, for comparison), `--photo-model / --dedupe-model / --scope-model`.
+Flags: `--transcript 01-prepared|02-vague|03-overclaim`, `--guided` (photos arrive room-tagged), `--xact-fault-rate 0.5`, `--baseline` (all photos in one Opus call, for comparison), `--photo-model / --dedupe-model / --scope-model`.
 
 ## Data
 

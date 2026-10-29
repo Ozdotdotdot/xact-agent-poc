@@ -49,7 +49,7 @@ If a measuring tape or meter is visible, prefer its reading."""
 
 async def extract_photo(client: Client, model: str, path: Path) -> dict:
     obs = await client.json_call(
-        "1-photos", model, SYSTEM,
+        "2-photos", model, SYSTEM,
         [image_block(path), {"type": "text", "text": f"Photo id: {path.name}"}],
         max_tokens=4000,
     )

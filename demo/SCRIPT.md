@@ -9,7 +9,7 @@ uv sync
 echo "ZEN_API_KEY=<your OpenCode Zen key>" > .env
 
 # warm-up run: caches the per-photo results so the live run is fast and you've seen it work once
-uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.3
+uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.5
 
 uv run demo/build.py
 xdg-open demo/deck.html        # F = fullscreen, arrow keys / space to move
@@ -30,7 +30,7 @@ Public photos don't carry the measurements an estimate needs, so I staged a loss
 | 3 | Staged water loss | "So I staged my own. Bedroom, den, living room, tape at three heights I measured, 23 photos with duplicates and different angles. Now I know the right answer for every room." |
 | 4 | Three callers | "Then three calls about the same basement: one prepared, one vague, one exaggerating. Each should trigger specific flags, and the guided runs caught every one." |
 | 5 | Pipeline | Walk the boxes left to right: "Read the call and pull out every fact with a quote. Describe each photo with a cheap model, one photo per call. Sort photos into rooms. Count the wet walls in each room by looking at that room's photos together. Then code, not a model, computes the estimate, writes it to Xact and reads it back to catch silent failures." |
-| 6 | Live run | Switch to the terminal and run the command. Its steps are numbered 1–6, matching the slide. Point at: step 3 *skipped*, the `?` lines (things sent to a human: the office has no photos, "over a foot" vs ~5 in), and step 6 round 1 catching corrupted or missing lines and round 2 fixing them. Cost ~8¢. |
+| 6 | Live run | Switch to the terminal and paste the one-line command from the slide. The steps are numbered 1–6, matching the pipeline slide. Point at: step 3 *skipped* (photos came tagged); step 4 wall counts; step 5 the **line items** (only rooms with measurements get billed: the overclaimer gave only the bedroom size, so den and living room are *held* and show up as `?` lines instead), the `?` lines (no photos of the office, "over a foot" vs ~5 in); step 6 the rounds catching dropped or corrupted writes until it verifies. About 8–9¢. |
 | 7 | Bar chart | "I iterated five times, nine runs each, scored against the truth. v1 and v2 hand every photo description to one model to group, and the stronger model does much better. v3 split it per room, which fixed wall counting but made room sorting worse. v4 gave the sorter what the caller said about each room. That helps when the caller is honest and hurts when they're not. v5 is the only change that isn't a model change: the photos arrive tagged with their room. 100%, even with the lying caller." |
 | 8 | 27/27 · 27/27 · 9/9 · $0.08 | "With that one change, every flood cut and every flag was right in every run, for 8 cents a claim." |
 | 9 | Wall counts | "What's still open: the L-shaped den gets over-counted. It does get flagged for a human, and the capture flow fixes it with one step per wall." |
@@ -48,4 +48,4 @@ Public photos don't carry the measurements an estimate needs, so I staged a loss
 
 - A model call fails: the client retries. If the run dies, open the warm-up run's report.
 - No write failures this run (they're random): "no faults this time; the eval repaired 60 across 45 runs."
-- The den shows 3 or 4 walls: expected, and it's flagged with `? den: confirm wet-wall count`.
+- A room shows an extra wall (den or bedroom): expected run to run, and it's flagged with `? <room>: confirm wet-wall count`.

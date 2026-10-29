@@ -202,4 +202,4 @@ def build(facts: dict, surfaces: list[dict]) -> dict:
 
 
 async def extract_facts(client: Client, model: str, transcript: str) -> dict:
-    return await client.json_call("0-transcript", model, SYSTEM, transcript, max_tokens=4000)
+    return await client.json_call("1-call", model, SYSTEM, transcript, max_tokens=4000)

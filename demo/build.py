@@ -387,13 +387,11 @@ td.closer{font-family:var(--mono);font-size:26px;color:var(--accent)}
 <div class="mono reveal">05 · Live</div>
 <h2 class=reveal>One run, end to end.</h2>
 <div class="term reveal"><div class=bar><i></i><i></i><i></i></div>
-<pre><span class=p>$</span> uv run run.py data/claim-001 \
-    --transcript 03-overclaim --guided --xact-fault-rate 0.3
-<span class=c>→ out/claim-001/03-overclaim/report.html</span></pre></div>
+<pre><span class=p>$</span> uv run run.py data/claim-001 --transcript 03-overclaim --guided --xact-fault-rate 0.5</pre></div>
 <div class="params reveal">
 <div><span>Caller</span>Overclaims</div>
 <div><span>Photos</span>Tagged by room</div>
-<div><span>Mock Xact</span>30% of writes silently fail</div>
+<div><span>Mock Xact</span>half of writes silently fail</div>
 </div>
 </section>
 

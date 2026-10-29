@@ -115,13 +115,13 @@ async def assign_rooms(client: Client, model: str, observations: list[dict], kno
                      "water_lines_in": [s["water_line_in"] for s in wall_obs(o) if s.get("water_line_in") is not None]})
         prev = t or prev
     prompt = f"KNOWN ROOMS: {json.dumps(known_rooms)}\n\nPHOTOS IN CAPTURE ORDER:\n{json.dumps(rows)}"
-    out = await client.json_call("2a-rooms", model, ROOMS_SYSTEM, prompt, max_tokens=4000)
+    out = await client.json_call("3-rooms", model, ROOMS_SYSTEM, prompt, max_tokens=4000)
     return {a["photo"]: a for a in out["assignments"]}
 
 
 async def walls_for_room(client: Client, model: str, room: str, photos: list[str], photo_dir: Path) -> dict:
     content = [grid(photo_dir, photos), {"type": "text", "text": f"Photos: {', '.join(photos)}"}]
-    return await client.json_call("2b-walls", model, WALLS_SYSTEM.format(room=room), content, max_tokens=3000)
+    return await client.json_call("4-walls", model, WALLS_SYSTEM.format(room=room), content, max_tokens=3000)
 
 
 async def run(client: Client, model: str, observations: list[dict], known_rooms: dict[str, dict],
